@@ -18,9 +18,15 @@
     </style>
 </head>
 <body>
+<form action="/video/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file"/>
+    <input type="text" name="title"/>
+    <input type="submit" value="Submit"/>
+</form>
 <div class="box" id="box">
-    <video id="mainVideo" src="http://localhost:8081/video/%E7%AC%AC1%E8%AF%BE%EF%BC%9A%E8%AF%BE%E7%A8%8B%E4%BB%8B%E7%BB%8D%E4%B8%8EUnity3D%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.mp4" controls="controls" preload>
+    <video id="mainVideo" src="http://localhost:8081/video/class2.mp4" controls="controls" preload>
     </video>
+    <input type="hidden" name="abc" value="sda">
     <div id="dm">
 
     </div>

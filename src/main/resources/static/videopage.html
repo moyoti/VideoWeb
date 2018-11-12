@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.js"></script>
+    <script src="/js/bootstrap-autohidingnavbar.js"></script>
+    <script>
+        $("div.navbar-fixed-top").autoHidingNavbar({});
+    </script>
+</head>
+<body>
+<div class="navbar navbar-inverse visible-lg visible-md navbar-fixed-top navbar-hidden" role="navigation"
+     style="top: 0px;">
+    <div class="container">
+
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">首页</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">链接1</a></li>
+                <li><a href="#">链接2</a></li>
+                <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">链接3</a></li>
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <!--登录时-->
+                <li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"
+                         style="height: 38px;width:38px;margin-top: 6px"></li>
+                <li><a href="#">username</a></li>
+                <!--未登录时-->
+                <li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<br><br><br><br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <video style="width: 100%;height: 480px;" id="mainVideo" src="http://localhost:8081/video/class2.mp4"
+                   controls="controls" preload>
+            </video>
+        </div>
+    </div>
+    <div class="row">
+        <h2>评论</h2>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="container" style="position:static;">
+                <div class="row">
+                    <div class="col-xs-2">
+                        <img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"
+                             style="height: 90px;width:90px;margin-top: 20px;margin-left: 60px;position: static">
+                    </div>
+                    <br>
+                    <div class="col-xs-7">
+                        <textarea class="form-control" rows="4" placeholder="发表你的评论吧！" style="resize: none;"></textarea>
+                    </div>
+                    <div class="col-xs-1">
+                        <button type="button" class="btn btn-primary btn-lg" style="height: 93px;width: 80px">发表
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br><br><hr>
+    <!--单条评论始-->
+    <div class="row">
+        <div class="col-xs-2">
+            <img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"
+                 style="height: 90px;width:90px;margin-top: 6px;margin-left: 30px;position: static">
+            <br>
+            <br>
+            <span style="margin-left: 40px">username</span>
+        </div>
+        <br>
+        <div class="col-xs-9">
+            <p>评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            </p>
+        </div>
+    </div>
+    <br>
+    <!--单条评论末-->
+    <div class="row">
+        <div class="col-xs-2">
+            <img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"
+                 style="height: 90px;width:90px;margin-top: 6px;margin-left: 30px;position: static">
+            <br>
+            <br>
+            <span style="margin-left: 40px">username</span>
+        </div>
+        <br>
+        <div class="col-xs-9">
+            <p>评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            </p>
+        </div>
+    </div>
+    <br>
+</div>
+</div>
+<footer>
+    <div style="width: 100%;height: 100px;background: black">
+
+    </div>
+</footer>
+</body>
+</html>

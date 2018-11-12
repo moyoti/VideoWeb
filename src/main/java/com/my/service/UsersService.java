@@ -7,4 +7,5 @@ public interface UsersService {
 //    User findAllUsers(int id);
     User findByUsername(String username);
     int usernameCheck(String username);
+    int verifyEmail(String email);
 }

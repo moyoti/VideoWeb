@@ -1,7 +1,16 @@
+
 server:
   port: 8079
-
+  max-http-header-size: 102400000
+  jetty:
+    max-http-post-size: 102400000
 spring:
+    servlet:
+        multipart:
+            enabled: true
+            resolve-lazily: true
+            max-file-size: 500Mb
+            max-request-size: 500Mb
     datasource:
         name: test
         url: jdbc:mysql://127.0.0.1:3306/videoweb

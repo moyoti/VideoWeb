@@ -1,15 +1,12 @@
 <!DOCTYPE html>
+<!--suppress ALL -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>用户注册</title>
-    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <title>登陆</title>
+
     <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-
-    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
         function getVerifyCode(obj) {
@@ -20,17 +17,24 @@
             var vci=document.getElementById("verifycode");
             getVerifyCode(vci)
         }
-        function regist() {
+        function login() {
             var username=$("u_name").val();
             var password=$("u_pass").val();
-            var email=$("u_email").val();
-            var phone=$("u_phonenum").val();
-            var vc=$("vcode").val();
+            var vc=$("vcode").val()
             $.ajax({
                 type: "POST",
                 url: "/users/login",
-                data: {password: password,username:username,vcode:vc,email: email, phone: phone},
+                data: {password: password,username:username,vcode:vc},
                 success: function (re) {
+//                    alert("List size is "+userlist.length);
+//                    for(var i=0;i<userlist.length;i++){
+//                        alert(userlist[i].uname+" "+userlist[i].uid+" "+userlist[i].password);
+//
+//                        var tbBody = "";
+//                        tbBody += "<tr><td><button id='"+userlist[i].uid+"' onclick='alert(this.id)'>aaa</button></td></tr>";
+//                        $("#table").append(tbBody);
+//                    }
+
                 }
             })
         }
@@ -63,35 +67,19 @@
         </div>
     </div>
 </div>
-<!--<div style="width: 100%;height: 250px">-->
-</div>
-<div class="container" style="margin-top: 10%">
+<div class="container" style="margin-top: 15%">
     <div class="row">
-        <div class="col-md-3 col-md-offset-3">
+        <div class="col-md-3 col-md-offset-4">
             <label>用户名：</label><span id="usernameErr"></span>
             <input id="u_name" type="text" class="form-control" placeholder="用户名" maxlength="10">
-            <label>昵称：</label><span id="nicknameErr"></span>
-            <input id="u_nick" type="text" class="form-control" placeholder="昵称" maxlength="10">
             <label>密码：</label><span id="passwordErr"></span>
             <input id="u_pass" type="password" class="form-control" placeholder="密码"maxlength="12">
-            <label>确认密码：</label><span id="passwordReErr"></span>
-            <input id="u_reck" type="password" class="form-control" placeholder="确认密码"maxlength="12">
-            <label>邮箱：</label><span id="emailErr"></span>
-            <input id="u_email" type="email" class="form-control" placeholder="邮箱">
-            <label>手机号：</label><span id="phoneErr"></span>
-            <input id="u_phonenum" type="text" class="form-control" placeholder="手机" maxlength="11">
             <label>验证码：</label><span id="verifyErr"></span>
             <input id="vcode" type="text" class="form-control" placeholder="验证码">
             <img id="verifycode" src="verify/getImage" alt="重新获取" onclick="getVerifyCode(this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="refreshCode()">看不清换一张</a><br/>
-            <button type="button" class="btn btn-primary" style="margin-top: 10px;width: 100%" onclick="regist()">注册</button>
+            <button type="button" class="btn btn-primary" style="width: 100%" onclick="login()">登陆</button>
         </div>
     </div>
 </div>
-<!--<div class="container">-->
-    <!--<div class="row">-->
-        <!--<div class="col-md-3">-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</div>-->
 </body>
 </html>
