@@ -18,7 +18,6 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public int addUser(User users) {
-
         return userMapper.insertSelective(users);
     }
 
@@ -54,6 +53,11 @@ public class UsersServiceImpl implements UsersService {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    @Override
+    public int userUpdatedByUid(User user) {
+        return userMapper.updateByPrimaryKey(user);
     }
 
 }

@@ -8,4 +8,5 @@ public interface UsersService {
     User findByUsername(String username);
     int usernameCheck(String username);
     int verifyEmail(String email);
+    int userUpdatedByUid(User user);
 }
