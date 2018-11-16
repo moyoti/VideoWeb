@@ -9,4 +9,6 @@ import com.my.pojo.UserActive;
 public interface UserActiveService {
     int addUserActive(UserActive userActive);
     UserActive getUserActiveByUid(int uid);
+    int deleteByUid(int uid);
+    int updateUserActive(UserActive userActive);
 }

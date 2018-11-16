@@ -1,12 +1,10 @@
 package com.my.controller;
 
+import com.my.pojo.PicVideo;
 import com.my.pojo.User;
 import com.my.pojo.UserVideo;
 import com.my.pojo.Video;
-import com.my.service.UserVideoService;
-import com.my.service.UserVideoServiceImpl;
-import com.my.service.UsersService;
-import com.my.service.VideoService;
+import com.my.service.*;
 import com.my.util.FileTransferClient;
 import com.my.util.UUIDTool;
 import org.apache.commons.io.FileUtils;
@@ -34,7 +32,13 @@ public class VideoController {
     private UsersService usersService;
     @Autowired
     private UserVideoService userVideoService;
+    @Autowired
+    private VideoPicService videoPicService;
 
+    @RequestMapping(value = "/{vid}",method = RequestMethod.GET)
+    public Video showVideo(@PathVariable(value = "vid")int vid){
+        return videoService.getVideoById(vid);
+    }
     //    @RequestMapping(value = "/upload", method = RequestMethod.POST)
 //    public int uploadVideo(HttpServletRequest request, MultipartFile file){
 //        String targetURL="D:\\Program Files\\qqp\\994308383\\FileRecv\\MobileFile\\VideoPart\\out\\artifacts\\VideoPart_war_exploded\\video";
@@ -44,16 +48,30 @@ public class VideoController {
 //        video.setVideoPath(targetURL);
 //        return videoService.addVideo(video,file, targetURL);
 //    }
+    @RequestMapping(value = "/uploadPic", method = RequestMethod.POST)
+    public String PicUpload(MultipartFile file, @Param("vid") int vid){
+        String fileName=UUIDTool.getUUID() + file.getOriginalFilename();
+        String path = "D:\\upload\\pic";
+        PicVideo picVideo=new PicVideo();
+        picVideo.setVideoid(vid);
+        picVideo.setPicpath(fileName);
+        try {
+            videoPicService.addVideoPic(picVideo,file,path,fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "success";
+    }
     @RequestMapping(value = "/upload", method = {RequestMethod.POST})
     public @ResponseBody
     String testUpload(MultipartFile file, HttpServletRequest request, @Param(value = "title") String title) {
-        String path = request.getSession().getServletContext().getRealPath("upload");
+        String path;
         HttpSession session=request.getSession();
         String username=(String)session.getAttribute("username");
-        path = "D:\\upload\\pic";
+        path = "D:\\upload\\video";
         String fileName=UUIDTool.getUUID() + file.getOriginalFilename();
         Video video = new Video();
-        video.setVideoPath("\\upload\\pic\\" + fileName);
+        video.setVideoPath(fileName);
         video.setTitle(title);
         try {
             videoService.addVideo(video, file, path, fileName);
@@ -65,7 +83,6 @@ public class VideoController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 //        try {
 //            File ioFile =null;
 //            if(!file.isEmpty()){

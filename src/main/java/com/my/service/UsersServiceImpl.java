@@ -37,27 +37,31 @@ public class UsersServiceImpl implements UsersService {
         return userMapper.checkUsername(username);
     }
 
-    @Override
-    public int verifyEmail(String email) {
-        //todo 将activecode插入数据库
-        try {
-            String activeCode = UUIDTool.getUUID();
-            String url = "http://localhost:8079/user?activecode=" + activeCode;
-            String content = "进入如下网址激活:" + url;
-            String title = "激活您的账号";
-            EmailSender es = new EmailSender();
-            es.setProperties("smtp.163.com", "25");
-            es.setMessage("dqh_ql@163.com", title, content);
-            es.setReceiver(new String[]{email});
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
+//    @Override
+//    public int verifyEmail(String email) {
+//        try {
+//            String activeCode = UUIDTool.getUUID();
+//            String url = "http://localhost:8079/user?activecode=" + activeCode;
+//            String content = "进入如下网址激活:" + url;
+//            String title = "激活您的账号";
+//            EmailSender es = new EmailSender();
+//            es.setProperties("smtp.163.com", "25");
+//            es.setMessage("dqh_ql@163.com", title, content);
+//            es.setReceiver(new String[]{email});
+//        } catch (MessagingException e) {
+//            e.printStackTrace();
+//        }
+//        return 0;
+//    }
 
     @Override
     public int userUpdatedByUid(User user) {
         return userMapper.updateByPrimaryKey(user);
+    }
+
+    @Override
+    public User fundUserById(int uid) {
+        return userMapper.selectByPrimaryKey(uid);
     }
 
 }

@@ -44,20 +44,35 @@
     <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.js"></script>
     <script src="/js/bootstrap-autohidingnavbar.js"></script>
-    <!--<script>-->
-        <!--$(document).ready(function(){-->
-            <!--$("#myNav").affix({-->
-                <!--offset: {-->
-                    <!--top: 250-->
-                <!--}-->
-            <!--});-->
-        <!--});-->
-    <!--</script>-->
+    <script>
+        $(document).ready(function () {
+            var tbody;
+            $.ajax({
+                type: "POST",
+                url: "/users/loginstats",
+                data: {},
+                success:function (result) {
+                    if(result==1){
+                        tbody=""
+                        tbody="<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/20151101201716.jpg\"\n" +
+                            "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
+                            "                <li><a href=\"#\">username</a></li>";
+                        document.getElementById("usershow").innerHTML +=tbody;
+                    }else {
+                        tbody="<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
+                            "                <li><a href=\"login.html\"><span class=\"glyphicon glyphicon-log-in\"></span> 登录</a></li>";
+                        document.getElementById("usershow").innerHTML +=tbody;
+                    }
+                }
+            });
+
+        });
+    </script>
 </head>
 <body data-spy="scroll" data-target="#myScrollspy">
 <div id="mobile-menu" class="mobile-nav visible-xs visible-sm">
     <ul>
-        <li><a class="navbar-brand" href="#">首页</a></li>
+        <li><a class="navbar-brand" href="homepage.html">首页</a></li>
         <li class="active"><a href="#">链接1</a></li>
         <li><a href="#">链接2</a></li>
         <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">链接3</a></li>
@@ -82,14 +97,14 @@
                 <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">链接3</a></li>
 
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul id="usershow" class="nav navbar-nav navbar-right">
                 <!--登录时-->
-                <li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"
-                         style="height: 38px;width:38px;margin-top: 6px"></li>
-                <li><a href="#">username</a></li>
+                <!--<li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"-->
+                         <!--style="height: 38px;width:38px;margin-top: 6px"></li>-->
+                <!--<li><a href="#">username</a></li>-->
                 <!--未登录时-->
-                <li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+                <!--<li><a href="login.html"><span class="glyphicon glyphicon-user"></span> 注册</a></li>-->
+                <!--<li><a href="signup.html"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>-->
             </ul>
         </div>
     </div>

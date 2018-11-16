@@ -8,6 +8,121 @@
     <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.js"></script>
     <script src="/js/bootstrap-autohidingnavbar.js"></script>
     <script>
+        var url;
+        var tmp1;
+        var param;
+        function subCommentOfVideo() {
+            var comment=$("#commentOfVideo").val();
+            $.ajax({
+                type: "POST",
+                url:"/comment/addComment",
+                data:{content: comment,vid:param},
+                success:function (re) {
+                    if(re==1){
+                        alert("success");
+                    }
+                }
+            });
+        }
+        function showSubComments(obj) {
+            obj.style.visibility = "hidden";
+            var cid = obj.dataset.cid;
+            $.ajax({
+                type: "POST",
+                url: "/comment/getSubComment",
+                data: {cid: cid, page: 2},
+                success: function (re) {
+
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            url = location.href;
+            tmp1 = url.split("?")[1];
+            param = tmp1.split("=")[1];
+            var page = 1;
+            var tbody;
+            $.ajax({
+                type: "POST",
+                url: "/users/loginstats",
+                data: {},
+                success: function (result) {
+                    if (result == 1) {
+                        tbody = "";
+                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/20151101201716.jpg\"\n" +
+                            "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
+                            "                <li><a href=\"#\">username</a></li>";
+                        document.getElementById("usershow").innerHTML += tbody;
+                    } else {
+                        tbody = "<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
+                            "                <li><a href=\"login.html\"><span class=\"glyphicon glyphicon-log-in\"></span> 登录</a></li>";
+                        document.getElementById("usershow").innerHTML += tbody;
+                    }
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/video/" + param,
+                data: {},
+                success: function (result) {
+                    $("#mainVideo").attr("src", "http://localhost:8081/video/" + result.videoPath);
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "/comment/getVideoComments",
+                data: {vid: param, page: page},
+                success: function (re) {
+                    var tbody = "";
+                    for (var it = 0; it < re.length; it++) {
+                        var puname = re[it].username;
+                        var pcomment = re[it].pComment.content;
+                        var cid = re[it].pComment.id;
+                        tbody = "<br>";
+                        tbody += "<div class=\"row\">\n" +
+                            "        <div class=\"col-xs-2\">\n" +
+                            "            <img class=\"img-circle\" src=\"http://localhost:8081/pic/20151101201716.jpg\"\n" +
+                            "                 style=\"height: 90px;width:90px;margin-top: 6px;margin-left: 30px;position: static\">\n" +
+                            "            <br>\n" +
+                            "            <br>\n" +
+                            "            <span style=\"margin-left: 40px\">" + puname + "</span>\n" +
+                            "        </div>\n" +
+                            "        <br>\n" +
+                            "        <div id=\"scomments\" class=\"col-xs-9\">\n" +
+                            "            <p>" + pcomment +
+                            "            </p>\n";
+                        document.getElementById("commentArea").innerHTML += tbody;
+                        for (var cit = 0; cit < re[it].cComment.length; cit++) {
+                            var ccont = re[it].cComment[cit].comment.content;
+                            var cuname = re[it].cComment[cit].username;
+                            tbody = "";
+                            tbody +=
+                                "            <div class=\"panel panel-default\">\n" +
+                                "                <div class=\"panel-body\">\n" +
+                                "                    <div class=\"container\">\n" +
+                                "                        <div class=\"row\">\n" +
+                                "                            <div class=\"col-md-1\">\n" +
+                                "                                <a href=\"#\">" + cuname + "</a>:\n" +
+                                "                            </div>\n" +
+                                "                            <div class=\"col-md-10\">\n" +
+                                "                                " + ccont + "\n" +
+                                "                            </div>\n" +
+                                "                        </div>\n" +
+                                "                    </div>\n" +
+                                "                </div>\n" +
+                                "            </div>\n"+
+                                "            <a data-cid=\"" + cid + "\" onclick=\"showSubComments(this)\">查看更多评论</a>\n";
+                            document.getElementById("scomments").innerHTML += tbody;
+                        }
+
+                    }
+                    tbody = "";
+                    tbody += "        </div><br>";
+                    document.getElementById("commentArea").innerHTML += tbody;
+                }
+            })
+        });
         $("div.navbar-fixed-top").autoHidingNavbar({});
     </script>
 </head>
@@ -17,7 +132,7 @@
     <div class="container">
 
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">首页</a>
+            <a class="navbar-brand" href="homepage.html">首页</a>
         </div>
         <div>
             <ul class="nav navbar-nav">
@@ -26,14 +141,14 @@
                 <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">链接3</a></li>
 
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul id="usershow" class="nav navbar-nav navbar-right">
                 <!--登录时-->
-                <li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"
-                         style="height: 38px;width:38px;margin-top: 6px"></li>
-                <li><a href="#">username</a></li>
+                <!--<li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"-->
+                <!--style="height: 38px;width:38px;margin-top: 6px"></li>-->
+                <!--<li><a href="#">username</a></li>-->
                 <!--未登录时-->
-                <li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+                <!--<li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>-->
+                <!--<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>-->
             </ul>
         </div>
     </div>
@@ -42,7 +157,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <video style="width: 100%;height: 480px;" id="mainVideo" src="http://localhost:8081/video/class2.mp4"
+            <video style="width: 100%;height: 480px;" id="mainVideo" src=""
                    controls="controls" preload>
             </video>
         </div>
@@ -60,70 +175,21 @@
                     </div>
                     <br>
                     <div class="col-xs-7">
-                        <textarea class="form-control" rows="4" placeholder="发表你的评论吧！" style="resize: none;"></textarea>
+                        <textarea id="commentOfVideo" class="form-control" rows="4" placeholder="发表你的评论吧！" style="resize: none;"></textarea>
                     </div>
                     <div class="col-xs-1">
-                        <button type="button" class="btn btn-primary btn-lg" style="height: 93px;width: 80px">发表
+                        <button type="button" onclick="subCommentOfVideo()" class="btn btn-primary btn-lg" style="height: 93px;width: 80px">发表
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <br><br><br><hr>
-    <!--单条评论始-->
-    <div class="row">
-        <div class="col-xs-2">
-            <img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"
-                 style="height: 90px;width:90px;margin-top: 6px;margin-left: 30px;position: static">
-            <br>
-            <br>
-            <span style="margin-left: 40px">username</span>
-        </div>
+    <br><br><br>
+    <hr>
+    <div class="container" id="commentArea">
         <br>
-        <div class="col-xs-9">
-            <p>评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            </p>
-        </div>
     </div>
-    <br>
-    <!--单条评论末-->
-    <div class="row">
-        <div class="col-xs-2">
-            <img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"
-                 style="height: 90px;width:90px;margin-top: 6px;margin-left: 30px;position: static">
-            <br>
-            <br>
-            <span style="margin-left: 40px">username</span>
-        </div>
-        <br>
-        <div class="col-xs-9">
-            <p>评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                评论区!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            </p>
-        </div>
-    </div>
-    <br>
-</div>
 </div>
 <footer>
     <div style="width: 100%;height: 100px;background: black">

@@ -9,4 +9,5 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface VideoService {
     int addVideo(Video video, MultipartFile file, String targetURL,String fileName) throws Exception;
+    Video getVideoById(int id);
 }

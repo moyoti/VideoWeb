@@ -11,6 +11,9 @@
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="from_uid" property="fromUid" jdbcType="INTEGER" />
   </resultMap>
+  <select id="queryByPage" parameterType="map" resultMap="BaseResultMap">
+    SELECT * FROM comment limit #{curIndex},#{pageSize}
+  </select>
   <sql id="Example_Where_Clause" >
     <!--
       WARNING - @mbggenerated

@@ -72,7 +72,9 @@
         <!--</table>-->
         <!--<table schema="videoweb" tableName="admin">-->
         <!--</table>-->
-        <table schema="videoweb" tableName="user_active">
+        <!--<table schema="videoweb" tableName="user_active">-->
+        <!--</table>-->
+        <table schema="videoweb" tableName="pic_video">
         </table>
     </context>
 </generatorConfiguration>

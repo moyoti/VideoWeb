@@ -11,6 +11,9 @@
     <result column="parent_id" property="parentId" jdbcType="INTEGER" />
     <result column="child_id" property="childId" jdbcType="INTEGER" />
   </resultMap>
+  <select id="queryByPage" parameterType="map" resultMap="BaseResultMap">
+    SELECT * FROM comment_relation WHERE parent_id=#{pid} limit #{curIndex},#{pageSize}
+  </select>
   <sql id="Example_Where_Clause" >
     <!--
       WARNING - @mbggenerated

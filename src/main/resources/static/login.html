@@ -9,6 +9,28 @@
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
+        $(document).ready(function () {
+            var tbody;
+            $.ajax({
+                type: "POST",
+                url: "/users/loginstats",
+                data: {},
+                success:function (result) {
+                    if(result==1){
+                        tbody=""
+                        tbody="<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/20151101201716.jpg\"\n" +
+                            "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
+                            "                <li><a href=\"#\">username</a></li>";
+                        document.getElementById("usershow").innerHTML +=tbody;
+                    }else {
+                        tbody="<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
+                            "                <li><a href=\"login.html\"><span class=\"glyphicon glyphicon-log-in\"></span> 登录</a></li>";
+                        document.getElementById("usershow").innerHTML +=tbody;
+                    }
+                }
+            });
+
+        });
         function getVerifyCode(obj) {
             obj.src="verify/getImage?"+Math.random();
 //            obj.src="verify/getImage";
@@ -18,14 +40,19 @@
             getVerifyCode(vci)
         }
         function login() {
-            var username=$("u_name").val();
-            var password=$("u_pass").val();
-            var vc=$("vcode").val()
+            var username=$("#u_name").val();
+            var password=$("#u_pass").val();
+            var vc=$("#vcode").val()
             $.ajax({
                 type: "POST",
                 url: "/users/login",
                 data: {password: password,username:username,vcode:vc},
                 success: function (re) {
+                    if(re==1){
+                        window.location.href="homepage.html";
+                    }else {
+                        alert("recheck");
+                    }
 //                    alert("List size is "+userlist.length);
 //                    for(var i=0;i<userlist.length;i++){
 //                        alert(userlist[i].uname+" "+userlist[i].uid+" "+userlist[i].password);
@@ -46,7 +73,7 @@
     <div class="container">
 
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">首页</a>
+            <a class="navbar-brand" href="homepage.html">首页</a>
         </div>
         <div>
             <ul class="nav navbar-nav">
@@ -55,14 +82,14 @@
                 <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">链接3</a></li>
 
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul id="usershow" class="nav navbar-nav navbar-right">
                 <!--登录时-->
-                <li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"
-                         style="height: 38px;width:38px;margin-top: 6px"></li>
-                <li><a href="#">username</a></li>
+                <!--<li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"-->
+                         <!--style="height: 38px;width:38px;margin-top: 6px"></li>-->
+                <!--<li><a href="#">username</a></li>-->
                 <!--未登录时-->
-                <li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+                <!--<li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>-->
+                <!--<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>-->
             </ul>
         </div>
     </div>

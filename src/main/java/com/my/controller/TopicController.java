@@ -7,6 +7,7 @@ import com.my.service.UsersService;
 import com.my.service.UsersTopicService;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +29,10 @@ public class TopicController {
     @Autowired
     private UsersTopicService usersTopicService;
 
+    @RequestMapping(value = "/{tid}",method = RequestMethod.GET)
+    public Topic showTopic(@PathVariable("tid") int tid){
+        return topicService.getTopicById(tid);
+    }
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     public int subTopic(HttpServletRequest request, @Param(value = "title") String title,
                         @Param(value = "content") String content){

@@ -20,4 +20,9 @@ public class TopicServiceImpl implements TopicService {
         topicMapper.insert(topic);
         return 1;
     }
+
+    @Override
+    public Topic getTopicById(int id) {
+        return topicMapper.selectByPrimaryKey(id);
+    }
 }

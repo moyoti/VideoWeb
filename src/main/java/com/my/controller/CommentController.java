@@ -1,9 +1,6 @@
 package com.my.controller;
 
-import com.my.pojo.Comment;
-import com.my.pojo.CommentRelation;
-import com.my.pojo.CommentVideo;
-import com.my.pojo.User;
+import com.my.pojo.*;
 import com.my.service.CommentReService;
 import com.my.service.CommentService;
 import com.my.service.CommentVideoService;
@@ -16,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: dongqihang
@@ -32,6 +31,39 @@ public class CommentController {
     private CommentReService commentReService;
     @Autowired
     private CommentVideoService commentVideoService;
+    @RequestMapping(value = "/getVideoComments",method = RequestMethod.POST)
+    //每页大小为6，写死
+    public List<CommentGroup> getVideoComments(@Param("vid") int vid,@Param("page")int page){
+        List<Comment> comments;//评论
+        List<CommentGroup> cgComments=new ArrayList<>();//评论组
+        try {
+            comments=commentService.getCommentsOfVideoByPage(vid,page,6);
+            for(Comment item:comments){
+                List<Comment> cComments;//评论的评论
+                List<CommentItem> ciComments=new ArrayList<>();//单个追评
+                cComments=commentReService.getCRByPage(item.getId(),1,3);
+                for (Comment citem:cComments){
+                    User user=usersService.fundUserById(citem.getFromUid());
+                    CommentItem commentItem=new CommentItem();
+                    commentItem.setComment(citem);
+                    commentItem.setUsername(user.getUsername());
+                    ciComments.add(commentItem);
+                }
+                cComments.clear();
+                User user=usersService.fundUserById(item.getFromUid());
+                CommentGroup commentGroup=new CommentGroup();
+                commentGroup.setcComment(ciComments);
+                commentGroup.setpComment(item);
+                commentGroup.setUsername(user.getUsername());
+                cgComments.add(commentGroup);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            cgComments=new ArrayList<>();
+            return cgComments;
+        }
+        return cgComments;
+    }
     @RequestMapping(value = "/addComment",method = RequestMethod.POST)
     public int subComment(HttpServletRequest request, @Param(value = "content")String content,@Param(value = "vid") int vid){
         HttpSession session=request.getSession();
@@ -63,5 +95,15 @@ public class CommentController {
         commentRelation.setChildId(comment.getId());
         commentReService.addCommentRe(commentRelation);
         return 1;
+    }
+    @RequestMapping(value = "/getSubComment",method = RequestMethod.POST)
+    public List getSubComments(@Param("cid") int cid,@Param("page") int page){
+        List<Comment> cComments=new ArrayList<>();
+        try {
+            cComments=commentReService.getCRByPage(cid,page,2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cComments;
     }
 }

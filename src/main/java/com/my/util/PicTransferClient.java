@@ -1,26 +1,28 @@
 package com.my.util;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.Socket;
 
 /**
  * @Author: dongqihang
- * @Date: Created in 21:51 2018/11/5
+ * @Date: Created in 13:28 2018/11/14
  */
-public class FileTransferClient extends Socket {
+public class PicTransferClient extends Socket {
     private static final String SERVER_IP="127.0.0.1";
-    private static final int SERVER_PORT=8899;
+    private static final int SERVER_PORT=8898;
     private Socket client;
     private FileInputStream fis;
     private DataOutputStream dos;
-    public FileTransferClient() throws IOException {
+
+    public PicTransferClient() throws Exception {
         super(SERVER_IP,SERVER_PORT);
         this.client=this;
-        System.out.println("init client");
     }
     public void sendFile(File file) throws IOException {
         try {
-//            File file = new File(pathName);
             if (file.exists()) {
                 fis = new FileInputStream(file);
                 dos = new DataOutputStream(client.getOutputStream());
@@ -54,13 +56,4 @@ public class FileTransferClient extends Socket {
         }
     }
 
-    public static void main(String[] args) {
-        try{
-            FileTransferClient client=new FileTransferClient();
-            File file = new File("D:\\upload\\pic\\xianggang.avi");
-            client.sendFile(file);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 }

@@ -23,24 +23,34 @@ import javax.servlet.http.HttpSession;
  */
 @RestController
 @RequestMapping(value = "/activeAcc")
-//todo test
-//todo 重复给同一个账户发送邮件时直接更新数据库对应行的acode
 public class ActiveAccountController {
     @Autowired
     private UserActiveService userActiveService;
     @Autowired
     private UsersService usersService;
 
-    @RequestMapping(value = "/activeRequest",method = RequestMethod.POST)
-    public int activeUser(HttpServletRequest request){
-        HttpSession session=request.getSession();
-//        String username=(String)session.getAttribute("username");
-        String username="username1";
-        String activeCode=UUIDTool.getUUID();
-        User user=usersService.findByUsername(username);
-        String url = "http://localhost:8079/activeAcc/acuser?acode=" + activeCode+"&uid="+user.getId();
-        String eContent="点击下面链接激活您的账号："+url;
-        try{
+    @RequestMapping(value = "/activeRequest", method = RequestMethod.POST)
+    public int activeUser(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String username = (String) session.getAttribute("username");
+//        String username="username1";
+        String activeCode = UUIDTool.getUUID();
+        User user = usersService.findByUsername(username);
+        String url = "http://localhost:8079/activeAcc/acuser?acode=" + activeCode + "&uid=" + user.getId();
+        String eContent = "点击下面链接激活您的账号：" + url;
+        UserActive userActive = userActiveService.getUserActiveByUid(user.getId());
+        if (!(userActive==null)) {
+            userActive.setActivecode(activeCode);
+            userActive.setUserid(user.getId());
+            userActiveService.updateUserActive(userActive);
+        }else {
+            userActive = new UserActive();
+            userActive.setActivecode(activeCode);
+            userActive.setUserid(user.getId());
+            userActiveService.addUserActive(userActive);
+        }
+        //todo 邮件乱码
+        try {
             EmailSender emailSender = new EmailSender();
             //设置服务器地址和端口
             emailSender.setProperties("smtp.163.com", "25");
@@ -50,30 +60,26 @@ public class ActiveAccountController {
             emailSender.setReceiver(new String[]{user.getEmail()});
             //发送邮件
             emailSender.sendEmail("smtp.163.com", "dqh_ql@163.com", "my1234567891");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-        UserActive userActive=new UserActive();
-        userActive.setActivecode(activeCode);
-        userActive.setUserid(user.getId());
-        userActiveService.addUserActive(userActive);
         return 1;
     }
-    //todo 成功激活后删除对应记录
-    @RequestMapping(value = "/acuser",method = RequestMethod.GET)
+
+    @RequestMapping(value = "/acuser", method = RequestMethod.GET)
     public int activeUserAccount(HttpServletRequest request,
                                  @RequestParam(value = "uid") int uid,
-                                 @RequestParam(value = "acode") String acode){
-        HttpSession session=request.getSession();
-//        String username=(String)session.getAttribute("username");
-        String username="username1";
-        User user=usersService.findByUsername(username);
-        int userid=user.getId();
-        UserActive userActive=userActiveService.getUserActiveByUid(userid);
-        if(userid==uid&&userActive.getActivecode().equals(acode)){
+                                 @RequestParam(value = "acode") String acode) {
+        HttpSession session = request.getSession();
+        String username = (String) session.getAttribute("username");
+//        String username="username1";
+        User user = usersService.findByUsername(username);
+        int userid = user.getId();
+        UserActive userActive = userActiveService.getUserActiveByUid(userid);
+        if (userid == uid && userActive.getActivecode().equals(acode)) {
             user.setActive(1);
             usersService.userUpdatedByUid(user);
+            userActiveService.deleteByUid(user.getId());
             return 1;
         }
         return 0;

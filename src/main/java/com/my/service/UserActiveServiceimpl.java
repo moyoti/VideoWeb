@@ -25,4 +25,16 @@ public class UserActiveServiceimpl implements UserActiveService{
     public UserActive getUserActiveByUid(int uid) {
         return userActiveMapper.selectByUid(uid);
     }
+
+    @Override
+    public int deleteByUid(int uid) {
+        return userActiveMapper.deleteByUid(uid);
+    }
+
+    @Override
+    public int updateUserActive(UserActive userActive) {
+        userActiveMapper.updateByPrimaryKey(userActive);
+        return 1;
+    }
+
 }
