@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
         pageMap.put("pageSize", pageSize);
         List<CommentVideo> commentVideoList = commentVideoMapper.queryByPage(pageMap);
         for(CommentVideo item:commentVideoList){
-            cids.add(item.getId());
+            cids.add(item.getCommentId());
         }
         commentExample.or().andIdIn(cids);
         return commentMapper.selectByExample(commentExample);

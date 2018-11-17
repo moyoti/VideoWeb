@@ -80,7 +80,7 @@ public class CommentController {
         commentVideoService.addCommentVideo(commentVideo);
         return 1;
     }
-    @RequestMapping(value = "/apdComment", method = RequestMethod.POST)
+    @RequestMapping(value = "/apdComment", method = RequestMethod.GET)
     public int apdComment(HttpServletRequest request,@Param(value = "content") String content,@Param(value = "pcid") int pcid){
         HttpSession session=request.getSession();
         String username= (String) session.getAttribute("username");
@@ -98,12 +98,20 @@ public class CommentController {
     }
     @RequestMapping(value = "/getSubComment",method = RequestMethod.POST)
     public List getSubComments(@Param("cid") int cid,@Param("page") int page){
-        List<Comment> cComments=new ArrayList<>();
+        List<Comment> cComments=null;
+        List<CommentItem> ciComments=new ArrayList<>();
         try {
-            cComments=commentReService.getCRByPage(cid,page,2);
+            cComments=commentReService.getCRByPage(cid,page,3);
+            for(Comment item:cComments){
+                CommentItem ci=new CommentItem();
+                ci.setComment(item);
+                User user=usersService.fundUserById(item.getFromUid());
+                ci.setUsername(user.getUsername());
+                ciComments.add(ci);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return cComments;
+        return ciComments;
     }
 }

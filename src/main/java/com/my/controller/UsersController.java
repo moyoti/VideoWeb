@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: dongqihang
@@ -21,13 +23,17 @@ public class UsersController {
     @Autowired
     private UsersService usersService;
     @RequestMapping(value = "/loginstats",method = RequestMethod.POST)
-    public int userLoginCheck(HttpServletRequest request){
+    public List userLoginCheck(HttpServletRequest request){
         HttpSession session= request.getSession();
+        List<Object> loginStat=new ArrayList<>();
         String stats= String.valueOf(session.getAttribute("loginstats"));
+        String username= (String) session.getAttribute("username");
         if (stats.equals("1")){
-            return 1;
+            loginStat.add(stats);
+            loginStat.add(username);
+            return loginStat;
         }else {
-            return 0;
+            return loginStat;
         }
     }
 
@@ -54,7 +60,12 @@ public class UsersController {
         }
         return 0;
     }
-
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public int usersLogout(HttpSession session){
+        session.setAttribute("loginstats",0);
+        session.setAttribute("username","");
+        return 1;
+    }
     /***
      * 用户登录
      * @param request
