@@ -2,6 +2,7 @@ package com.my.service;
 
 import com.my.dao.PicVideoMapper;
 import com.my.pojo.PicVideo;
+import com.my.pojo.PicVideoExample;
 import com.my.util.FileTransferClient;
 import com.my.util.PicTransferClient;
 import org.mybatis.spring.annotation.MapperScan;
@@ -29,5 +30,16 @@ public class VideoPicServiceImpl implements VideoPicService {
         client.sendFile(tarFile);
         picVideoMapper.insert(picVideo);
         return 0;
+    }
+    @Override
+    public int updatePicOfVideo(PicVideo picVideo) {
+        return picVideoMapper.updateByPrimaryKey(picVideo);
+    }
+
+    @Override
+    public PicVideo getByVideoId(int id) {
+        PicVideoExample picVideoExample=new PicVideoExample();
+        picVideoExample.or().andVideoidEqualTo(id);
+        return picVideoMapper.selectByExample(picVideoExample).get(0);
     }
 }

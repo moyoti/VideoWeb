@@ -54,26 +54,26 @@
              <!--<columnOverride column=""></columnOverride> -->
         <!--</table>-->
         <!--<table schema="scott" tableName="dept"/>-->
-        <!--<table schema="videoweb" tableName="user">-->
-        <!--</table>-->
-        <!--<table schema="videoweb" tableName="user_video">-->
-        <!--</table>-->
-        <!--<table schema="videoweb" tableName="comment">-->
-        <!--</table>-->
-        <!--<table schema="videoweb" tableName="comment_video">-->
-        <!--</table>-->
-        <!--<table schema="videoweb" tableName="comment_relation">-->
-        <!--</table>-->
-        <!--<table schema="videoweb" tableName="topic">-->
-        <!--</table>-->
-        <!--<table schema="videoweb" tableName="video">-->
-        <!--</table>-->
-        <!--<table schema="videoweb" tableName="user_topic">-->
-        <!--</table>-->
-        <!--<table schema="videoweb" tableName="admin">-->
-        <!--</table>-->
-        <!--<table schema="videoweb" tableName="user_active">-->
-        <!--</table>-->
+        <table schema="videoweb" tableName="user">
+        </table>
+        <table schema="videoweb" tableName="user_video">
+        </table>
+        <table schema="videoweb" tableName="comment">
+        </table>
+        <table schema="videoweb" tableName="comment_video">
+        </table>
+        <table schema="videoweb" tableName="comment_relation">
+        </table>
+        <table schema="videoweb" tableName="topic">
+        </table>
+        <table schema="videoweb" tableName="video">
+        </table>
+        <table schema="videoweb" tableName="user_topic">
+        </table>
+        <table schema="videoweb" tableName="admin">
+        </table>
+        <table schema="videoweb" tableName="user_active">
+        </table>
         <table schema="videoweb" tableName="pic_video">
         </table>
     </context>

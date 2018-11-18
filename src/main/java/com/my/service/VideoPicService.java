@@ -11,4 +11,6 @@ import java.io.IOException;
  */
 public interface VideoPicService {
     int addVideoPic(PicVideo picVideo, MultipartFile multipartFile,String targetURL,String fileName) throws Exception;
+    int updatePicOfVideo(PicVideo picVideo);
+    PicVideo getByVideoId(int id);
 }

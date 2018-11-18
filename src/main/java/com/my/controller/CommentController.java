@@ -7,6 +7,7 @@ import com.my.service.CommentVideoService;
 import com.my.service.UsersService;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,7 @@ public class CommentController {
     private CommentReService commentReService;
     @Autowired
     private CommentVideoService commentVideoService;
+
     @RequestMapping(value = "/getVideoComments",method = RequestMethod.POST)
     //每页大小为6，写死
     public List<CommentGroup> getVideoComments(@Param("vid") int vid,@Param("page")int page){
@@ -57,6 +59,10 @@ public class CommentController {
                 commentGroup.setUsername(user.getUsername());
                 cgComments.add(commentGroup);
             }
+        } catch (BadSqlGrammarException e){
+            System.out.println("no comments");
+            cgComments=new ArrayList<>();
+            return cgComments;
         } catch (Exception e) {
             e.printStackTrace();
             cgComments=new ArrayList<>();
