@@ -13,12 +13,14 @@
                 type: "POST",
                 url: "/users/loginstats",
                 data: {},
-                success: function (result) {
-                    if (result == 1) {
-                        tbody = ""
-                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/20151101201716.jpg\"\n" +
+                success:function (result) {
+                    userHeadPic=result[3];
+                    if (result[0] == 1) {
+                        tbody = "";
+                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/"+result[3]+"\"\n" +
                             "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
-                            "                <li><a href=\"#\">username</a></li>";
+                            "                <li><a href=\"#\">" + result[1] + "</a></li>"
+                            + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
                         document.getElementById("usershow").innerHTML += tbody;
                     } else {
                         tbody = "<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
@@ -27,6 +29,7 @@
                     }
                 }
             });
+
         });
     </script>
 </head>

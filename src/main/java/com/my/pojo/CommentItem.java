@@ -2,7 +2,7 @@ package com.my.pojo;
 
 /**
  * @Author: dongqihang
- * @Date: Created in 18:16 2018/11/13
+ * @Date: Created in 20:22 2018/11/18
  */
 public class CommentItem {
     private String username;

@@ -12,7 +12,7 @@
         var tmp1;
         var param;
         var commentpage = 1;
-
+        var userHeadPic;
         function subCommentModalFrame(obj) {
             var cid = obj.dataset.cid;
             $("#myModal").modal("toggle");
@@ -48,10 +48,11 @@
                         var puname = re[it].username;
                         var pcomment = re[it].pComment.content;
                         var cid = re[it].pComment.id;
+                        var uHeadPic=re[it].picPath;
                         tbody = "<br>";
                         tbody += "<div class=\"row\">\n" +
                             "        <div class=\"col-xs-2\">\n" +
-                            "            <img class=\"img-circle\" src=\"http://localhost:8081/pic/20151101201716.jpg\"\n" +
+                            "            <img class=\"img-circle\" src=\"http://localhost:8081/pic/"+uHeadPic+"\"\n" +
                             "                 style=\"height: 90px;width:90px;margin-top: 6px;margin-left: 30px;position: static\">\n" +
                             "            <br>\n" +
                             "            <br>\n" +
@@ -105,7 +106,7 @@
                 data: {content: comment, vid: param},
                 success: function (re) {
                     if (re == 1) {
-                        alert("success");
+                        loadComments();
                     }
                 }
             });
@@ -166,10 +167,11 @@
                         var pcomment = re[it].pComment.content;
                         var cid = re[it].pComment.id;
                         var tcid = "scomments" + cid;
+                        var uHeadPic=re[it].picPath;
                         tbody = "<br>";
                         tbody += "<div class=\"row\">\n" +
                             "        <div class=\"col-xs-2\">\n" +
-                            "            <img class=\"img-circle\" src=\"http://localhost:8081/pic/20151101201716.jpg\"\n" +
+                            "            <img class=\"img-circle\" src=\"http://localhost:8081/pic/"+uHeadPic+"\"\n" +
                             "                 style=\"height: 90px;width:90px;margin-top: 6px;margin-left: 30px;position: static\">\n" +
                             "            <br>\n" +
                             "            <br>\n" +
@@ -218,11 +220,11 @@
         function logout() {
             $.ajax({
                 type: "POST",
-                url: "/users/loginstats",
+                url: "/users/logout",
                 data: {},
                 success: function (result) {
                     if (result == 1) {
-                        location.href = "logout.html";
+                        location.href="logout.html";
                     }
                 }
             });
@@ -239,11 +241,13 @@
                 url: "/users/loginstats",
                 data: {},
                 success: function (result) {
+                    userHeadPic=result[3];
                     if (result[0] == 1) {
 //                        document.getElementById("pubComment").style.visibility="visible";
                         document.getElementById("commitLoginTip").style.display = "none";
+                        $("#userCommentPic").attr("src","http://localhost:8081/pic/" + result[3]);
                         tbody = "";
-                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/20151101201716.jpg\"\n" +
+                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/"+result[3]+"\"\n" +
                             "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
                             "                <li><a href=\"#\">" + result[1] + "</a></li>"
                             + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
@@ -331,7 +335,7 @@
             <div class="container" style="position:static;">
                 <div class="row">
                     <div class="col-xs-2">
-                        <img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"
+                        <img id="userCommentPic" class="img-circle" src=""
                              style="height: 90px;width:90px;margin-top: 20px;margin-left: 60px;position: static">
                     </div>
                     <br>

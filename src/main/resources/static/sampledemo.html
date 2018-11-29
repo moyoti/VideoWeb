@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <style>
+        body{
+            background: url("u=2184226794,3254021773&fm=27&gp=0.jpg");
+            opacity: 1;
+        }
+        .p-bullet {
+            background: url("QQ图片20181112000424.png");
+            width: 24px;
+            height: 24px;
+            position: absolute;
+        }
+
+        .player {
+            background: url("Yuyukosin.png");
+            width: 28px;
+            height: 56px;
+            position: absolute;
+        }
+
+        .enemyObject {
+            background: url("Yukarizun.jpg");
+            width: 45px;
+            height: 56px;
+            position: absolute;
+        }
+
+        #enemy {
+            position: absolute;
+        }
+
+        .e-bullet {
+            background: url("QQ图片20181112000339.png");
+            width: 20px;
+            height: 27px;
+            position: absolute;
+        }
+    </style>
+    <script>
+        var bodyw;
+        var bodyh;
+        var keystats = [];
+        var player = document.getElementsByClassName("player");
+
+        bodyw = window.outerWidth;
+        bodyh = window.outerHeight;
+        var timer;
+        setInterval(colliderCk,10);
+        setInterval(playerCollider,10);
+        setInterval(main, 1);
+        setInterval(limitEnemyNumber, 3000);
+        setInterval(shoot, 120);
+        setInterval(moveleft, 200);
+        setInterval(enemyShoot, 2000);
+        //        setInterval(function () {
+        //            console.info(getCenter(player[0]));
+        //        },100);
+        function getabsDistance(obj1, obj2) {
+            var pos1 = getCenter(obj1);
+            var pos2 = getCenter(obj2);
+            var xoffset=pos1[0]-pos2[0];
+            var yoffset=pos1[1]-pos2[1];
+            return Math.sqrt(Math.abs(xoffset*xoffset)+Math.abs(yoffset*yoffset));
+        }
+        function colliderCk() {
+            var enemies=document.getElementsByClassName("enemyObject");
+            for(var i=0;i<enemies.length;i++){
+                enemyCollider(enemies[i]);
+            }
+        }
+        function enemyCollider(obj) {
+            var pBullets=document.getElementsByClassName("p-bullet");
+            for(var i=0;i<pBullets.length;i++){
+                if(getabsDistance(obj,pBullets[i])<20){
+                    obj.parentNode.removeChild(obj);
+                }
+            }
+        }
+        function playerCollider() {
+            var eBullets=document.getElementsByClassName('e-bullet');
+            var enemies=document.getElementsByClassName("enemyObject");
+            for(var i=0;i<eBullets.length;i++){
+                if(getabsDistance(player[0],eBullets[i])<20){
+                    location.reload();
+                }
+            }
+            for(var i=0;i<enemies.length;i++){
+                if(getabsDistance(player[0],enemies[i])<=20){
+                    location.reload();
+                }
+            }
+        }
+        function getCenter(obj) {
+            var pos = [];
+            pos[0] = (obj.style.width / 2) + obj.offsetLeft;
+            pos[1] = (obj.style.height / 2) + obj.offsetTop;
+            return pos;
+        }
+
+        function main() {
+            document.addEventListener("keydown", function (e) {
+                keystats[e.keyCode] = true;
+            });
+            document.addEventListener("keyup", function (e) {
+                keystats[e.keyCode] = false;
+            });
+            playerMove();
+            ebMoveLeft();
+            moveright();
+        }
+
+        function limitEnemyNumber() {
+            var oSpan = document.getElementsByClassName("enemyObject");
+            if (oSpan.length <= 12) {
+                initEnemy();
+            }
+        }
+
+        function sleep(numberMillis) {
+            var now = new Date();
+            var exitTime = now.getTime() + numberMillis;
+            while (true) {
+                now = new Date();
+                if (now.getTime() > exitTime)
+                    return;
+            }
+        }
+
+        function ebMoveLeft() {
+            var ebarr = [];
+            var ebSpan = document.getElementsByClassName("e-bullet");
+            for (var i = 0; i < ebSpan.length; i++) {
+                ebarr.push(ebSpan[i].offsetLeft);
+                ebarr[i] -= 2;
+                ebSpan[i].style.left = ebarr[i] + 'px';
+                var offsets = -ebSpan[i].offsetWidth;
+                if (ebarr[i] < offsets) {
+                    var dmDom = document.getElementById('enemyBullet');
+                    dmDom.removeChild(dmDom.childNodes[0]);
+                }
+            }
+        }
+
+        function moveleft() {
+            var arr = [];
+            var oSpan = document.getElementsByClassName("enemyObject");
+            for (var i = 0; i < oSpan.length; i++) {
+                arr.push(oSpan[i].offsetLeft);
+                arr[i] -= 2;
+                oSpan[i].style.left = arr[i] + 'px';
+                var offsets = -oSpan[i].offsetWidth;
+                if (arr[i] < offsets) {
+                    var dmDom = document.getElementById('enemy');
+                    dmDom.removeChild(dmDom.childNodes[0]);
+                }
+            }
+        }
+
+        function moveup() {
+            var arr = [];
+            var oSpan = document.getElementsByTagName('span');
+            for (var i = 0; i < oSpan.length; i++) {
+                arr.push(oSpan[i].offsetTop);
+                arr[i] -= 2;
+                oSpan[i].style.top = arr[i] + 'px';
+                var offsets = -oSpan[i].offsetHeight;
+                if (arr[i] < offsets) {
+                    var dmDom = document.getElementById('dm');
+                    dmDom.removeChild(dmDom.childNodes[0]);
+                }
+            }
+        }
+
+        function initEnemy() {
+            var pos = [];
+            pos[0] = bodyw;
+            pos[1] = Math.random() * 1000;
+            var dmDom = document.getElementById('enemy');
+            dmDom.innerHTML += "<span class=\"enemyObject\" style=\'top: " + pos[1] + "px;left:" + pos[0] + "px\' ></span>"
+        }
+
+        function enemyShoot() {
+            var enemies = document.getElementsByClassName('enemyObject');
+            for (var i = 0; i < enemies.length; i++) {
+                var pos = [];
+                pos[0] = enemies[i].offsetLeft;
+                pos[1] = enemies[i].offsetTop;
+                var dmDom = document.getElementById('enemyBullet');
+                dmDom.innerHTML += "<span class=\"e-bullet\" style=\"left:" + pos[0] + "px;top: " + pos[1] + "px\"></span>";
+            }
+        }
+
+        function moveright() {
+            var arr = [];
+//            var oSpan = document.getElementsByTagName('span');
+            var oSpan = document.getElementsByClassName("p-bullet");
+            for (var i = 0; i < oSpan.length; i++) {
+                arr.push(oSpan[i].offsetLeft);
+                arr[i] += 2;
+                oSpan[i].style.left = arr[i] + 'px';
+//                var offsets=oSpan[i].offsetWidth;
+                if (bodyw - arr[i] < 0) {
+                    var dmDom = document.getElementById('dm');
+                    dmDom.removeChild(dmDom.childNodes[0]);
+                }
+            }
+        }
+
+        function movedown() {
+            var arr = [];
+            var oSpan = document.getElementsByClassName("p-bullet");
+//            var oSpan=document.getElementsByTagName('span');
+            for (var i = 0; i < oSpan.length; i++) {
+                arr.push(oSpan[i].offsetTop);
+                arr[i] += 2;
+                oSpan[i].style.top = arr[i] + 'px';
+                if (bodyh - arr[i] < 0) {
+                    var dmDom = document.getElementById('dm');
+                    dmDom.removeChild(dmDom.childNodes[0]);
+                }
+            }
+        }
+
+        function shoot() {
+            if (keystats[74]) {
+                var pos = [];
+                pos[0] = player[0].offsetLeft;
+                pos[1] = player[0].offsetTop;
+                var dmDom = document.getElementById('dm');
+                dmDom.innerHTML += "<span class=\"p-bullet\" style=\"left:" + pos[0] + "px;top: " + pos[1] + "px\"></span>";
+            }
+        }
+
+        function playerMove() {
+
+            //左
+            if (keystats[65]) {
+                console.log("a down");
+                var offsets = player[0].offsetLeft;
+                offsets -= 2;
+                player[0].style.left = offsets + 'px';
+                console.log("move");
+                if (offsets < -player[0].offsetWidth) {
+                    player[0].style.left = 0 + 'px';
+                }
+            }
+            //右
+            if (keystats[68]) {
+                var offsets = player[0].offsetLeft;
+                offsets += 2;
+                player[0].style.left = offsets + 'px';
+                if (bodyw - offsets < 0) {
+                    player[0].style.right = 0 + 'px';
+                }
+            }
+            //下
+            if (keystats[83]) {
+                var offsets = player[0].offsetTop;
+                offsets += 2;
+                player[0].style.top = offsets + 'px';
+                if (bodyh - offsets < 0) {
+                    player[0].style.top = 0 + 'px';
+                }
+            }
+            //上
+            if (keystats[87]) {
+                var offsets = player[0].offsetTop;
+                offsets -= 2;
+                player[0].style.top = offsets + 'px';
+                if (offsets < player[0].offsetHeight) {
+                    player[0].style.top = 0 + 'px';
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<span id="player" class="player"></span>
+<div id="dm">
+    <!--<span id="danmu" class="p-bullet">testmove</span>-->
+</div>
+<div id="enemy">
+    <!--<span class="enemyObject">-->
+        <!--enemy-->
+    <!--</span>-->
+</div>
+<div id="enemyBullet">
+    <!--<span class="e-bullet">eb</span>-->
+</div>
+</body>
+</html>

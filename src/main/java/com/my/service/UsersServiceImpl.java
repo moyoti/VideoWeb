@@ -3,12 +3,16 @@ package com.my.service;
 import com.my.dao.UserMapper;
 import com.my.pojo.User;
 import com.my.util.EmailSender;
+import com.my.util.PicTransferClient;
 import com.my.util.UUIDTool;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import java.io.File;
+import java.io.IOException;
 
 @Service
 @MapperScan("com.my.dao")
@@ -62,6 +66,17 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public User fundUserById(int uid) {
         return userMapper.selectByPrimaryKey(uid);
+    }
+
+    @Override
+    public int userUpdatePic(User user, MultipartFile file, String targetURL, String fileName) throws Exception {
+        File tarFile = new File(targetURL, fileName);
+        file.transferTo(tarFile);
+        PicTransferClient client=new PicTransferClient();
+        client.sendFile(tarFile);
+        user.setUserPic(fileName);
+        userMapper.updateByPrimaryKey(user);
+        return 1;
     }
 
 }

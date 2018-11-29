@@ -73,7 +73,7 @@ public class VideoController {
 
     @RequestMapping(value = "/upload", method = {RequestMethod.POST})
     public @ResponseBody
-    String vUpload(MultipartFile file, HttpServletRequest request, @Param(value = "title") String title) {
+    String vUpload(@RequestParam(value = "myfile") MultipartFile file, HttpServletRequest request, @Param(value = "title") String title) {
         String path;
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");

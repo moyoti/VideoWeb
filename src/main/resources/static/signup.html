@@ -12,68 +12,287 @@
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
+        function userNameCheck(obj) {
+            var username = obj.val();
+            $.ajax({
+                type: "POST",
+                url: "/users/checkusername",
+                data: {username: username},
+                success: function (re) {
+                    if (re == 1) {
+                        $("#usernameFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                        $("#usernameAlert").style.display = "none";
+                    } else {
+                        $("#usernameFlag").innerHTML = "\n" +
+                            "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                        $("#usernameAlert").innerHTML = "用户名已被注册";
+                        $("#usernameAlert").style.display = "block";
+                    }
+                }
+            });
+        }
+
         function logout() {
             $.ajax({
                 type: "POST",
                 url: "/users/loginstats",
                 data: {},
-                success:function (result) {
-                    if(result==1){
-                        location.href="logout.html";
+                success: function (result) {
+                    if (result == 1) {
+                        location.href = "logout.html";
                     }
                 }
             });
         }
+
         $(document).ready(function () {
             var tbody;
             $.ajax({
                 type: "POST",
                 url: "/users/loginstats",
                 data: {},
-                success:function (result) {
-                    if(result[0]==1){
-                        tbody=""
-                        tbody="<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/20151101201716.jpg\"\n" +
+                success: function (result) {
+                    userHeadPic = result[3];
+                    if (result[0] == 1) {
+                        document.getElementById("commitLoginTip").style.display = "none";
+                        $("#userCommentPic").attr("src", "http://localhost:8081/pic/" + result[3]);
+                        tbody = "";
+                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/" + result[3] + "\"\n" +
                             "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
-                            "                <li><a href=\"#\">"+result[1]+"</a></li>"
+                            "                <li><a href=\"#\">" + result[1] + "</a></li>"
                             + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
-                        document.getElementById("usershow").innerHTML +=tbody;
-                    }else {
-                        tbody="<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
+                        document.getElementById("usershow").innerHTML += tbody;
+                    } else {
+                        document.getElementById("pubComment").style.display = "none";
+                        tbody = "<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
                             "                <li><a href=\"login.html\"><span class=\"glyphicon glyphicon-log-in\"></span> 登录</a></li>";
-                        document.getElementById("usershow").innerHTML +=tbody;
+                        document.getElementById("usershow").innerHTML += tbody;
                     }
                 }
             });
 
         });
+
         function getVerifyCode(obj) {
-            obj.src="verify/getImage?"+Math.random();
-//            obj.src="verify/getImage";
+            obj.src = "verify/getImage?" + Math.random();
         }
+
         function refreshCode() {
-            var vci=document.getElementById("verifycode");
+            var vci = document.getElementById("verifycode");
             getVerifyCode(vci)
         }
+
+        function usernammeCK() {
+            var username = $("#u_name").val();
+            var usernameRegex = /^[a-zA-Z\d]\w{2,10}[a-zA-Z\d]$/;
+            if (usernameRegex.test(username)) {
+                $("#usernameFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                $("#usernameAlert").style.display = "none";
+            } else {
+                $("#usernameFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#usernameAlert").innerHTML = "用户名格式有误";
+                $("#usernameAlert").style.display = "block";
+            }
+        }
+
+        function passwordCK() {
+            var password = $("#u_pass").val();
+            var passwordRegex = /^[a-zA-Z\d]\w{2,10}[a-zA-Z\d]$/;
+            if (passwordRegex.test(password)) {
+                $("#passwordFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                $("#userPasswordAlert").style.display = "none";
+            } else {
+                $("#passwordFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#userPasswordAlert").innerHTML = "密码格式有误";
+                $("#userPasswordAlert").style.display = "block";
+            }
+        }
+
+        function passCheckCK() {
+            var passCheck = $("#u_reck").val();
+            var passCheckRegex = /^[a-zA-Z\d]\w{2,10}[a-zA-Z\d]$/;
+            if (passCheckRegex.test(passCheck) && passCheck == password) {
+                $("#recheckPassAlert").style.display = "none";
+                $("#passwordReFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+            } else {
+                $("#passwordReFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#recheckPassAlert").innerHTML = "与密码不同";
+                $("#recheckPassAlert").style.display = "block";
+            }
+        }
+
+        function emailCK() {
+            var email = $("#u_email").val();
+            var emailRegex = /\w+@\w+(\.\w{2,3})*\.\w{2,3}/;
+            if (emailRegex.test(email)) {
+                $("#emailFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                $("#emailAlert").style.display = "none";
+            } else {
+                $("#emailFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#emailAlert").innerHTML = "邮箱格式有误";
+                $("#emailAlert").style.display = "block";
+            }
+        }
+
+        function phoneCK() {
+            var phone = $("#u_phonenum").val();
+            var phoneRegex = /^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\d{8}$/;
+            if (phoneRegex.test(phone)) {
+                $("#phoneFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                $("#phoneAlert").style.display = "none";
+            } else {
+                $("#phoneFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#phoneAlert").innerHTML = "电话格式有误";
+                $("#phoneAlert").style.display = "block";
+            }
+        }
+
+        function nicknameCK() {
+            var nickname = $("#u_nick").val();
+            var nicknameRegex = /^[a-zA-Z\d]\w{2,10}[a-zA-Z\d]$/;
+            if (nicknameRegex.test(nickname)) {
+                $("#nicknameFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                $("#nickNameAlert").style.display = "none";
+            } else {
+                $("#nicknameFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#nickNameAlert").innerHTML = "昵称格式有误";
+                $("#nickNameAlert").style.display = "block";
+            }
+        }
+
+        function infoVerify() {
+            var username = $("#u_name").val();
+            var usernameRegex = /^[a-zA-Z\d]\w{2,10}[a-zA-Z\d]$/;
+            var passCheck = $("#u_reck").val();
+            var passCheckRegex = /^[a-zA-Z\d]\w{2,10}[a-zA-Z\d]$/;
+            var password = $("#u_pass").val();
+            var passwordRegex = /^[a-zA-Z\d]\w{2,10}[a-zA-Z\d]$/;
+            var email = $("#u_email").val();
+            var emailRegex = /\w+@\w+(\.\w{2,3})*\.\w{2,3}/;
+            var phone = $("#u_phonenum").val();
+            var phoneRegex = /^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\d{8}$/;
+            var vc = $("#vcode").val();
+            var nickname = $("#u_nick").val();
+            var nicknameRegex = /^[a-zA-Z\d]\w{2,10}[a-zA-Z\d]$/;
+            if (usernameRegex.test(username)) {
+                $("#usernameFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                $("#usernameAlert").style.display = "none";
+            } else {
+                $("#usernameFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#usernameAlert").innerHTML = "用户名格式有误";
+                $("#usernameAlert").style.display = "block";
+                return false;
+            }
+            if (passwordRegex.test(password)) {
+                $("#passwordFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                $("#userPasswordAlert").style.display = "none";
+            } else {
+                $("#passwordFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#userPasswordAlert").innerHTML = "密码格式有误";
+                $("#userPasswordAlert").style.display = "block";
+                return false;
+            }
+            if (emailRegex.test(email)) {
+                $("#emailFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                $("#emailAlert").style.display = "none";
+            } else {
+                $("#emailFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#emailAlert").innerHTML = "邮箱格式有误";
+                $("#emailAlert").style.display = "block";
+                return false;
+            }
+            if (phoneRegex.test(phone)) {
+                $("#phoneFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                $("#phoneAlert").style.display = "none";
+            } else {
+                $("#phoneFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#phoneAlert").innerHTML = "电话格式有误";
+                $("#phoneAlert").style.display = "block";
+                return false;
+            }
+            if (nicknameRegex.test(nickname)) {
+                $("#nicknameFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+                $("#nickNameAlert").style.display = "none";
+            } else {
+                $("#nicknameFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#nickNameAlert").innerHTML = "昵称格式有误";
+                $("#nickNameAlert").style.display = "block";
+                return false;
+            }
+            if (passCheckRegex.test(passCheck) && passCheck == password) {
+                $("#recheckPassAlert").style.display = "none";
+                $("#passwordReFlag").innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
+            } else {
+                $("#passwordReFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#recheckPassAlert").innerHTML = "与密码不同";
+                $("#recheckPassAlert").style.display = "block";
+                return false;
+            }
+            return true;
+        }
+
+        function usernameLength() {
+            var username = $("#u_name").val();
+            if (username.length > 20 && username.length < 6) {
+                $("#usernameFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#usernameAlert").innerHTML = "用户名长度错误";
+                $("#usernameAlert").style.display = "block";
+
+            }
+        }
+
+        function passwordLength() {
+            var username = $("#u_pass").val();
+            if (username.length > 20 && username.length < 6) {
+                $("#usernameFlag").innerHTML = "\n" +
+                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
+                $("#usernameAlert").innerHTML = "密码长度错误";
+                $("#usernameAlert").style.display = "block";
+            }
+        }
+
         function regist() {
-            var username=$("#u_name").val();
-            var password=$("#u_pass").val();
-            var email=$("#u_email").val();
-            var phone=$("#u_phonenum").val();
-            var vc=$("#vcode").val();
-            var nickname=$("#u_nick").val();
-            $.ajax({
-                type: "POST",
-                url: "/users/signup",
-                data: {password: password,username:username,vcode:vc,email: email, phone: phone, nickname:nickname},
-                success: function (re) {
-                    if(re==1){
-                        alert("注册成功");
-                    }else {
-                        alert("recheck");
+            if (infoVerify()) {
+                var username = $("#u_name").val();
+                var password = $("#u_pass").val();
+                var email = $("#u_email").val();
+                var phone = $("#u_phonenum").val();
+                var vc = $("#vcode").val();
+                var nickname = $("#u_nick").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/users/signup",
+                    data: {
+                        password: password,
+                        username: username,
+                        vcode: vc,
+                        email: email,
+                        phone: phone,
+                        nickname: nickname
+                    },
+                    success: function (re) {
+                        if (re == 1) {
+                            alert("注册成功");
+                        } else {
+                            refreshCode();
+                            alert("recheck");
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     </script>
 </head>
@@ -95,7 +314,7 @@
             <ul id="usershow" class="nav navbar-nav navbar-right">
                 <!--登录时-->
                 <!--<li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"-->
-                         <!--style="height: 38px;width:38px;margin-top: 6px"></li>-->
+                <!--style="height: 38px;width:38px;margin-top: 6px"></li>-->
                 <!--<li><a href="#">username</a></li>-->
                 <!--未登录时-->
                 <!--<li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>-->
@@ -109,30 +328,58 @@
 <div class="container" style="margin-top: 10%">
     <div class="row">
         <div class="col-md-3 col-md-offset-3">
-            <label>用户名：</label><span id="usernameErr"></span>
-            <input id="u_name" type="text" class="form-control" placeholder="用户名" maxlength="10">
-            <label>昵称：</label><span id="nicknameErr"></span>
-            <input id="u_nick" type="text" class="form-control" placeholder="昵称" maxlength="10">
-            <label>密码：</label><span id="passwordErr"></span>
-            <input id="u_pass" type="password" class="form-control" placeholder="密码"maxlength="12">
-            <label>确认密码：</label><span id="passwordReErr"></span>
-            <input id="u_reck" type="password" class="form-control" placeholder="确认密码"maxlength="12">
-            <label>邮箱：</label><span id="emailErr"></span>
-            <input id="u_email" type="email" class="form-control" placeholder="邮箱">
-            <label>手机号：</label><span id="phoneErr"></span>
-            <input id="u_phonenum" type="text" class="form-control" placeholder="手机" maxlength="11">
-            <label>验证码：</label><span id="verifyErr"></span>
+            <label>用户名：</label><span id="usernameFlag"></span>
+            <input id="u_name" type="text" class="form-control" placeholder="用户名" maxlength="20"
+                   onblur="userNameCheck(this);usernammeCK()">
+            <br>
+            <div id="usernameAlert" style="display: none" class="alert alert-warning">
+
+            </div>
+            <label>昵称：</label><span id="nicknameFlag"></span>
+            <input id="u_nick" type="text" class="form-control" placeholder="昵称" maxlength="20" onblur="nicknameCK()">
+            <br>
+            <div id="nickNameAlert" style="display: none" class="alert alert-warning">
+
+            </div>
+            <label>密码：</label><span id="passwordFlag"></span>
+            <input id="u_pass" type="password" class="form-control" placeholder="密码" maxlength="20"
+                   onblur="passwordCK()">
+            <div id="userPasswordAlert" style="display: none" class="alert alert-warning">
+
+            </div>
+            <label>确认密码：</label><span id="passwordReFlag"></span>
+            <input id="u_reck" type="password" class="form-control" placeholder="确认密码" maxlength="20"
+                   onblur="passCheckCK()">
+            <div id="recheckPassAlert" style="display: none" class="alert alert-warning">
+
+            </div>
+            <label>邮箱：</label><span id="emailFlag"></span>
+            <input id="u_email" type="email" class="form-control" placeholder="邮箱" onblur="emailCK()">
+            <div id="emailAlert" style="display: none" class="alert alert-warning">
+
+            </div>
+            <label>手机号：</label><span id="phoneFlag"></span>
+            <input id="u_phonenum" type="text" class="form-control" placeholder="手机" maxlength="11" onblur="phoneCK()">
+            <div id="phoneAlert" style="display: none" class="alert alert-warning">
+
+            </div>
+            <label>验证码：</label><span id="verifyFlag"></span>
             <input id="vcode" type="text" class="form-control" placeholder="验证码">
-            <img id="verifycode" src="verify/getImage" alt="重新获取" onclick="getVerifyCode(this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="refreshCode()">看不清换一张</a><br/>
-            <button type="button" class="btn btn-primary" style="margin-top: 10px;width: 100%" onclick="regist()">注册</button>
+            <img id="verifycode" src="verify/getImage" alt="重新获取" onclick="getVerifyCode(this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+                onclick="refreshCode()">看不清换一张</a><br/>
+            <div id="vcAlert" style="display: none" class="alert alert-warning">
+
+            </div>
+            <button type="button" class="btn btn-primary" style="margin-top: 10px;width: 100%" onclick="regist()">注册
+            </button>
         </div>
     </div>
 </div>
 <!--<div class="container">-->
-    <!--<div class="row">-->
-        <!--<div class="col-md-3">-->
-        <!--</div>-->
-    <!--</div>-->
+<!--<div class="row">-->
+<!--<div class="col-md-3">-->
+<!--</div>-->
+<!--</div>-->
 <!--</div>-->
 </body>
 </html>

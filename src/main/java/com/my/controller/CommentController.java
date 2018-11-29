@@ -57,6 +57,7 @@ public class CommentController {
                 commentGroup.setcComment(ciComments);
                 commentGroup.setpComment(item);
                 commentGroup.setUsername(user.getUsername());
+                commentGroup.setPicPath(user.getUserPic());
                 cgComments.add(commentGroup);
             }
         } catch (BadSqlGrammarException e){
@@ -86,7 +87,7 @@ public class CommentController {
         commentVideoService.addCommentVideo(commentVideo);
         return 1;
     }
-    @RequestMapping(value = "/apdComment", method = RequestMethod.GET)
+    @RequestMapping(value = "/apdComment", method = RequestMethod.POST)
     public int apdComment(HttpServletRequest request,@Param(value = "content") String content,@Param(value = "pcid") int pcid){
         HttpSession session=request.getSession();
         String username= (String) session.getAttribute("username");

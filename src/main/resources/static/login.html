@@ -32,17 +32,18 @@
                 url: "/users/loginstats",
                 data: {},
                 success:function (result) {
-                    if(result[0]==1){
-                        tbody=""
-                        tbody="<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/20151101201716.jpg\"\n" +
+                    userHeadPic=result[3];
+                    if (result[0] == 1) {
+                        tbody = "";
+                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/"+result[3]+"\"\n" +
                             "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
-                            "                <li><a href=\"#\">"+result[1]+"</a></li>"
+                            "                <li><a href=\"#\">" + result[1] + "</a></li>"
                             + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
-                        document.getElementById("usershow").innerHTML +=tbody;
-                    }else {
-                        tbody="<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
+                        document.getElementById("usershow").innerHTML += tbody;
+                    } else {
+                        tbody = "<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
                             "                <li><a href=\"login.html\"><span class=\"glyphicon glyphicon-log-in\"></span> 登录</a></li>";
-                        document.getElementById("usershow").innerHTML +=tbody;
+                        document.getElementById("usershow").innerHTML += tbody;
                     }
                 }
             });
@@ -50,7 +51,6 @@
         });
         function getVerifyCode(obj) {
             obj.src="verify/getImage?"+Math.random();
-//            obj.src="verify/getImage";
         }
         function refreshCode() {
             var vci=document.getElementById("verifycode");
@@ -69,6 +69,7 @@
                         window.location.href="homepage.html";
                     }else {
                         alert("recheck");
+                        refreshCode();
                     }
                 }
             })
@@ -106,9 +107,9 @@
     <div class="row">
         <div class="col-md-3 col-md-offset-4">
             <label>用户名：</label><span id="usernameErr"></span>
-            <input id="u_name" type="text" class="form-control" placeholder="用户名" maxlength="10">
+            <input id="u_name" type="text" class="form-control" placeholder="用户名" maxlength="20">
             <label>密码：</label><span id="passwordErr"></span>
-            <input id="u_pass" type="password" class="form-control" placeholder="密码"maxlength="12">
+            <input id="u_pass" type="password" class="form-control" placeholder="密码"maxlength="20">
             <label>验证码：</label><span id="verifyErr"></span>
             <input id="vcode" type="text" class="form-control" placeholder="验证码">
             <img id="verifycode" src="verify/getImage" alt="重新获取" onclick="getVerifyCode(this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="refreshCode()">看不清换一张</a><br/>

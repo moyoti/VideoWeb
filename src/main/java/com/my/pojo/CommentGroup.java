@@ -4,10 +4,20 @@ import java.util.List;
 
 /**
  * @Author: dongqihang
- * @Date: Created in 16:52 2018/11/13
+ * @Date: Created in 20:22 2018/11/18
  */
 public class CommentGroup {
     private String username;
+
+    public String getPicPath() {
+        return picPath;
+    }
+
+    public void setPicPath(String picPath) {
+        this.picPath = picPath;
+    }
+
+    private String picPath;
 
     public String getUsername() {
         return username;
