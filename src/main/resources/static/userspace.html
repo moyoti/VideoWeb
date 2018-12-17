@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(
+            function () {
+                var tbody;
+                $.ajax({
+                    type: "POST",
+                    url: "/users/loginstats",
+                    data: {},
+                    success:function (result) {
+                        userHeadPic=result[3];
+                        if (result[0] == 1) {
+                            tbody = "";
+                            tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/"+result[3]+"\"\n" +
+                                "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
+                                "                <li><a href=\"#\">" + result[1] + "</a></li>"
+                                + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
+                            document.getElementById("usershow").innerHTML += tbody;
+                        } else {
+                            tbody = "<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
+                                "                <li><a href=\"login.html\"><span class=\"glyphicon glyphicon-log-in\"></span> 登录</a></li>";
+                            document.getElementById("usershow").innerHTML += tbody;
+                        }
+                    }
+                });
+                var ifr = document.getElementById('myFrame');
+                ifr.setAttribute('frameBorder', 0);
+                ifr.style.cssText = 'border: 0 none;width: 100%;height: 500px;';
+            }
+        );
+        $("div.navbar-fixed-top").autoHidingNavbar({});
+    </script>
+</head>
+<body>
+<div class="navbar navbar-inverse visible-lg visible-md navbar-fixed-top navbar-hidden" role="navigation"
+     style="top: 0px;">
+    <div class="container">
+
+        <div class="navbar-header">
+            <a class="navbar-brand" href="homepage.html">首页</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li><a href="#">个人信息</a></li>
+                <li><a href="#">上传头像</a></li>
+                <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">上传视频</a></li>
+            </ul>
+            <ul id="usershow" class="nav navbar-nav navbar-right">
+                <!--登录时-->
+                <!--<li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"-->
+                <!--style="height: 38px;width:38px;margin-top: 6px"></li>-->
+                <!--<li><a href="#">username</a></li>-->
+                <!--未登录时-->
+                <!--<li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>-->
+                <!--<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>-->
+            </ul>
+        </div>
+    </div>
+</div>
+<br><br><br><br>
+<div class="container">
+    <div class="row">
+            <iframe id="myFrame" src="upload.html" style="width: 100%;height: 800px;">
+            </iframe>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        function UploadFile() {
+            var xhrOnProgress = function (fun) {
+                xhrOnProgress.onprogress = fun; //绑定监听
+                //使用闭包实现监听绑
+                return function () {
+                    //通过$.ajaxSettings.xhr();获得XMLHttpRequest对象
+                    var xhr = $.ajaxSettings.xhr();
+                    //判断监听函数是否为函数
+                    if (typeof xhrOnProgress.onprogress !== 'function')
+                        return xhr;
+                    //如果有监听函数并且xhr对象支持绑定时就把监听函数绑定上去
+                    if (xhrOnProgress.onprogress && xhr.upload) {
+                        xhr.upload.onprogress = xhrOnProgress.onprogress;
+                    }
+                    return xhr;
+                }
+            };
+
+            var file = $("#file")[0].files[0];
+            var form = new FormData();
+            form.append('myfile', file);
+            form.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+            $("#file")[0].disabled="true";
+            $.ajax({
+                type: 'POST',
+                url: '/video/uploadPic',
+                data: form,
+                processData: false,  // 告诉jquery不转换数据
+                contentType: false,  // 告诉jquery不设置内容格式
+                xhr: xhrOnProgress(function (e) {
+                    var percent = e.loaded / e.total;
+                    $("#progress-bar").css("width", (percent * 500));
+                    document.getElementById("sr-only").innerText=parseInt((percent*100).toString())+"%";
+                }),
+
+                success: function (arg) {
+                    console.log(arg);
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+<form action="/video/uploadPic" enctype="multipart/form-data" method="POST">
+    <div id="uploadface">
+        <center style="float: left;z-index: 10;background: url('QQ图片20181112000339.png');width: 500px;height: 500px;"></center>
+    </div>
+    <input type="file" id="file" style="opacity: 0;position:absolute;width: 500px;height: 500px" onchange="UploadFile()"/>
+    <label onclick="$('#file')[0].disabled='false'">删除已上传并重新上传</label>
+</form>
+</body>
+</html>

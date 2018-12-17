@@ -6,6 +6,8 @@ import com.my.service.TopicService;
 import com.my.service.UsersService;
 import com.my.service.UsersTopicService;
 import org.apache.ibatis.annotations.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpSession;
 @RequestMapping(value = "/topic")
 @RestController
 public class TopicController {
+    private static Logger logger= LoggerFactory.getLogger(TopicController.class);
     @Autowired
     private TopicService topicService;
     @Autowired

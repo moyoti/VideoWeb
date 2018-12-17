@@ -6,6 +6,8 @@ import com.my.service.CommentService;
 import com.my.service.CommentVideoService;
 import com.my.service.UsersService;
 import org.apache.ibatis.annotations.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/comment")
 public class CommentController {
+    private static Logger logger= LoggerFactory.getLogger(CommentController.class);
     @Autowired
     private CommentService commentService;
     @Autowired
@@ -85,6 +88,7 @@ public class CommentController {
         commentVideo.setCommentId(comment.getId());
         commentVideo.setVideoId(vid);
         commentVideoService.addCommentVideo(commentVideo);
+        logger.info(user.getUsername()+" comment : "+content);
         return 1;
     }
     @RequestMapping(value = "/apdComment", method = RequestMethod.POST)
@@ -101,6 +105,7 @@ public class CommentController {
         commentRelation.setParentId(pcid);
         commentRelation.setChildId(comment.getId());
         commentReService.addCommentRe(commentRelation);
+        logger.info(user.getUsername()+" comment : "+content);
         return 1;
     }
     @RequestMapping(value = "/getSubComment",method = RequestMethod.POST)

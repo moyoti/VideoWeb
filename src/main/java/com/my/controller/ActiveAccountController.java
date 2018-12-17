@@ -6,6 +6,8 @@ import com.my.service.UserActiveService;
 import com.my.service.UsersService;
 import com.my.util.EmailSender;
 import com.my.util.UUIDTool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpSession;
 @RestController
 @RequestMapping(value = "/activeAcc")
 public class ActiveAccountController {
+    private static Logger logger= LoggerFactory.getLogger(ActiveAccountController.class);
     @Autowired
     private UserActiveService userActiveService;
     @Autowired
@@ -63,6 +66,7 @@ public class ActiveAccountController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        logger.info("user: "+user.getUsername()+" email send");
         return 1;
     }
 
@@ -80,6 +84,7 @@ public class ActiveAccountController {
             user.setActive(1);
             usersService.userUpdatedByUid(user);
             userActiveService.deleteByUid(user.getId());
+            logger.info(user.getUsername()+"active success");
             return 1;
         }
         return 0;

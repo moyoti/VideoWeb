@@ -13,6 +13,7 @@
         var param;
         var commentpage = 1;
         var userHeadPic;
+        var likeLabelFlag=false;
         function subCommentModalFrame(obj) {
             var cid = obj.dataset.cid;
             $("#myModal").modal("toggle");
@@ -48,11 +49,11 @@
                         var puname = re[it].username;
                         var pcomment = re[it].pComment.content;
                         var cid = re[it].pComment.id;
-                        var uHeadPic=re[it].picPath;
+                        var uHeadPic = re[it].picPath;
                         tbody = "<br>";
                         tbody += "<div class=\"row\">\n" +
                             "        <div class=\"col-xs-2\">\n" +
-                            "            <img class=\"img-circle\" src=\"http://localhost:8081/pic/"+uHeadPic+"\"\n" +
+                            "            <img class=\"img-circle\" src=\"http://localhost:8081/pic/" + uHeadPic + "\"\n" +
                             "                 style=\"height: 90px;width:90px;margin-top: 6px;margin-left: 30px;position: static\">\n" +
                             "            <br>\n" +
                             "            <br>\n" +
@@ -167,11 +168,11 @@
                         var pcomment = re[it].pComment.content;
                         var cid = re[it].pComment.id;
                         var tcid = "scomments" + cid;
-                        var uHeadPic=re[it].picPath;
+                        var uHeadPic = re[it].picPath;
                         tbody = "<br>";
                         tbody += "<div class=\"row\">\n" +
                             "        <div class=\"col-xs-2\">\n" +
-                            "            <img class=\"img-circle\" src=\"http://localhost:8081/pic/"+uHeadPic+"\"\n" +
+                            "            <img class=\"img-circle\" src=\"http://localhost:8081/pic/" + uHeadPic + "\"\n" +
                             "                 style=\"height: 90px;width:90px;margin-top: 6px;margin-left: 30px;position: static\">\n" +
                             "            <br>\n" +
                             "            <br>\n" +
@@ -224,7 +225,7 @@
                 data: {},
                 success: function (result) {
                     if (result == 1) {
-                        location.href="logout.html";
+                        location.href = "logout.html";
                     }
                 }
             });
@@ -241,13 +242,13 @@
                 url: "/users/loginstats",
                 data: {},
                 success: function (result) {
-                    userHeadPic=result[3];
-                    if (result[0] == 1) {
+                    userHeadPic = result[3];
+                    if (result[0] == 1 || result[0] == 0) {
 //                        document.getElementById("pubComment").style.visibility="visible";
                         document.getElementById("commitLoginTip").style.display = "none";
-                        $("#userCommentPic").attr("src","http://localhost:8081/pic/" + result[3]);
+                        $("#userCommentPic").attr("src", "http://localhost:8081/pic/" + result[3]);
                         tbody = "";
-                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/"+result[3]+"\"\n" +
+                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/" + result[3] + "\"\n" +
                             "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
                             "                <li><a href=\"#\">" + result[1] + "</a></li>"
                             + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
@@ -262,19 +263,73 @@
                 }
             });
             $.ajax({
+                type: "POST",
+                url: "/users/getUserByVid",
+                data: {vid: param},
+                success: function (re) {
+                    $("#authorImg")[0].src = "http://localhost:8081/pic/" + re.userPic;
+                    $("#authorUsername")[0].innerHTML = re.nickname;
+                }
+            });
+
+            $.ajax({
                 type: "GET",
                 url: "/video/" + param,
                 data: {},
                 success: function (result) {
-                    if(result.id==0){
-                        location.href="error/404.html"
-                    };
+                    if (result.id == 0) {
+                        location.href = "error/404.html"
+                    }
                     $("#mainVideo").attr("src", "http://localhost:8081/video/" + result.videoPath);
-                    document.getElementById("videoTitle").innerText=result.title;
+                    document.getElementById("videoTitle").innerText = result.title;
                 }
             });
             loadComments();
+            $.ajax({
+                type: "POST",
+                url: "/like/likevideos",
+                data: {vid:param},
+                success: function (result) {
+                    if(result==1){
+                        $("#videoLike")[0].innerHTML = "<span class=\"glyphicon glyphicon-star\" style=\"color: rgb(255, 91, 0);\"> 已收藏</span>"
+                    }
+                }
+            });
         });
+
+        function likeLabelToggle() {
+            if(likeLabelFlag){
+                cancelLikeVideo();
+            }
+            if(!likeLabelFlag){
+                likeVideo();
+            }
+        }
+        function likeVideo() {
+            $.ajax({
+                type:"POST",
+                url:"/like/add",
+                data:{vid:param},
+                success:function (re) {
+                    if(re==1){
+                        $("#videoLike")[0].innerHTML = "<span class=\"glyphicon glyphicon-star\" style=\"color: rgb(255, 91, 0);\"> 已收藏</span>"
+                    }
+                }
+            });
+        }
+        function cancelLikeVideo() {
+            $.ajax({
+                type:"POST",
+                url:"/like/add",
+                data:{vid:param},
+                success:function (re) {
+                    if(re==1){
+                        $("#videoLike")[0].innerHTML = "<span class=\"glyphicon glyphicon-star-empty\" style=\"color: rgb(125, 125, 125);\"> 收藏</span>"
+                    }
+                }
+            });
+        }
+
         $("div.navbar-fixed-top").autoHidingNavbar({});
     </script>
 </head>
@@ -306,11 +361,36 @@
 </div>
 <br><br><br><br>
 <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h2 id="videoTitle">
-                Title
-            </h2>
+    <div class="row" style="padding: 20px">
+        <div class="col-md-6">
+            <div>
+                <h2 id="videoTitle">
+                    Title
+                </h2>
+                <div>
+                    <span class="glyphicon glyphicon-eye-open" style="color: rgb(125, 125, 125);"> Eye-open</span>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <div style="display: inline" id="videoLike" onclick="likeLabelToggle()">
+                        <span class="glyphicon glyphicon-star-empty" style="color: rgb(125, 125, 125);">收藏</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-1">
+                        <img id="authorImg" class="img-circle" src="" style="height: 80px;width: 80px">
+                    </div>
+                    <div class="col-md-9">
+                        <div style="padding-left: 20px">
+                            <div style="padding-bottom: 10px"><span id="authorUsername" style="font-size: x-large">username</span>
+                            </div>
+                            <!--<div><span id="authorIntro" style="font-size: medium">introduce</span></div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">

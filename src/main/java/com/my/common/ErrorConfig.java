@@ -1,6 +1,7 @@
 package com.my.common;
 
 import com.my.interceptor.ErrorInterceptor;
+import com.my.interceptor.LoginInterceptor;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,7 @@ public class ErrorConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new ErrorInterceptor());//.addPathPatterns("/action/**", "/mine/**");默认所有
+        registry.addInterceptor(new LoginInterceptor());
         super.addInterceptors(registry);
     }
 }

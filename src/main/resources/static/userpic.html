@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var tbody;
+            $.ajax({
+                type: "POST",
+                url: "/users/loginstats",
+                data: {},
+                success:function (result) {
+                    userHeadPic=result[3];
+                    if (result[0] == 1||result[0] == 0) {
+                        $("#uploadface")[0].style.backgroundImage="url(http://localhost:8081/pic/"+userHeadPic+")";
+                    } else {
+                        console.log("error");
+                    }
+                }
+            });
+        });
+        function UploadFile() {
+            var xhrOnProgress = function (fun) {
+                xhrOnProgress.onprogress = fun; //绑定监听
+                //使用闭包实现监听绑
+                return function () {
+                    //通过$.ajaxSettings.xhr();获得XMLHttpRequest对象
+                    var xhr = $.ajaxSettings.xhr();
+                    //判断监听函数是否为函数
+                    if (typeof xhrOnProgress.onprogress !== 'function')
+                        return xhr;
+                    //如果有监听函数并且xhr对象支持绑定时就把监听函数绑定上去
+                    if (xhrOnProgress.onprogress && xhr.upload) {
+                        xhr.upload.onprogress = xhrOnProgress.onprogress;
+                    }
+                    return xhr;
+                }
+            };
+
+            var file = $("#file")[0].files[0];
+            var form = new FormData();
+            form.append('myfile', file);
+            form.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+            $("#file")[0].disabled="true";
+            $.ajax({
+                type: 'POST',
+                url: '/users/uploaduserpic',
+                data: form,
+                processData: false,  // 告诉jquery不转换数据
+                contentType: false,  // 告诉jquery不设置内容格式
+                xhr: xhrOnProgress(function (e) {
+                    var percent = e.loaded / e.total;
+                    $("#progress-bar").css("width", (percent * 500));
+                    document.getElementById("sr-only").innerText=parseInt((percent*100).toString())+"%";
+                }),
+
+                success: function (arg) {
+                    alert("success");
+                    console.log(arg);
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+<form action="/users/uploaduserpic" enctype="multipart/form-data" method="POST">
+    <div id="uploadface">
+        <!--<img src="QQ图片20181112000339.png" style="width: 80%;height: 80%;float: none;z-index: 2">-->
+        <center style="float: left;z-index: 10;width: 500px;height: 500px;width: 100px;height: 100px;"></center>
+    </div>
+    <input type="file" id="file" style="opacity: 0;position:absolute;width: 100px;height: 100px;" onchange="UploadFile()"/>
+    <label>点击图片上传头像</label>
+</form>
+</body>
+</html>

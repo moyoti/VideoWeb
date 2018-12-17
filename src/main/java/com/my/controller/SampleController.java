@@ -1,5 +1,7 @@
 package com.my.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import java.util.Map;
 @Controller
 //@RequestMapping(value = "/users")
 public class SampleController {
+    private static Logger logger= LoggerFactory.getLogger(SampleController.class);
 
     @Autowired
     private UsersService usersService;
@@ -19,6 +22,7 @@ public class SampleController {
 //    }
     @RequestMapping(value = "/ttt",method = RequestMethod.GET)
     public Object hello(){
+        logger.info("--------test---------");
         return "hello";
     }
     @RequestMapping(value = "/index")

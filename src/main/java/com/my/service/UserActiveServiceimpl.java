@@ -2,6 +2,7 @@ package com.my.service;
 
 import com.my.dao.UserActiveMapper;
 import com.my.pojo.UserActive;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @Date: Created in 23:59 2018/11/12
  */
 @Service
-@RequestMapping(value = "/activeAcc")
+@MapperScan("com.my.dao")
 public class UserActiveServiceimpl implements UserActiveService{
     @Autowired
     private UserActiveMapper userActiveMapper;

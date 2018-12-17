@@ -1,5 +1,6 @@
 package com.my.service;
 
+import com.my.pojo.User;
 import com.my.pojo.UserVideo;
 
 /**
@@ -8,4 +9,5 @@ import com.my.pojo.UserVideo;
  */
 public interface UserVideoService {
     int addUserVideoService(UserVideo userVideo);
+    User findUserByVid(int vid);
 }
