@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        #file{
+        }
+    </style>
+    <script>
+        $(function () {
+            $("#btn").on('click', function () {
+            });
+            $("#file").change(function () {
+                $("#progress-bar").css("width", 0);
+            });
+        });
+        function UploadFile() {
+            var xhrOnProgress = function (fun) {
+                xhrOnProgress.onprogress = fun; //绑定监听
+                //使用闭包实现监听绑
+                return function () {
+                    //通过$.ajaxSettings.xhr();获得XMLHttpRequest对象
+                    var xhr = $.ajaxSettings.xhr();
+                    //判断监听函数是否为函数
+                    if (typeof xhrOnProgress.onprogress !== 'function')
+                        return xhr;
+                    //如果有监听函数并且xhr对象支持绑定时就把监听函数绑定上去
+                    if (xhrOnProgress.onprogress && xhr.upload) {
+                        xhr.upload.onprogress = xhrOnProgress.onprogress;
+                    }
+                    return xhr;
+                }
+            };
+            var file = $("#file")[0].files[0];
+            var videotitle=$("#videoname").val();
+            var picfile = $("#picfile")[0].files[0];
+            var videocontent=$("#videoContent").val();
+            var form = new FormData();
+            form.append('myfile', file);
+            form.append('title',videotitle);
+            form.append('picfile',picfile);
+            form.append('content',videocontent);
+            form.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+            $.ajax({
+                type: 'POST',
+                url: '/video/upload',
+                data: form,
+                processData: false,  // 告诉jquery不转换数据
+                contentType: false,  // 告诉jquery不设置内容格式
+                xhr: xhrOnProgress(function (e) {
+                    var percent = e.loaded / e.total;
+                    $("#progress-bar").css("width", (percent * 500));
+                    document.getElementById("sr-only").innerText=parseInt((percent*100).toString())+"%";
+                }),
+                success: function (arg) {
+                    console.log(arg);
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-5 col-md-offset-2">
+            <form action="/video/upload" enctype="multipart/form-data" method="POST">
+                <input type="text" id="videoname">
+                <textarea id="videoContent" class="form-control" rows="4" placeholder=""
+                          style="resize: none;"></textarea>
+                <input type="file" id="picfile" style=""/>
+                <input type="file" id="file" style="" onchange="UploadFile()"/>
+            </form>
+            <div class="progress" style="width: 500px">
+                <div id="progress-bar" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
+                     aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                    <span id="sr-only" style="z-index: 10"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
