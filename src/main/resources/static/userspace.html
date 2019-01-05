@@ -21,11 +21,11 @@
                     data: {},
                     success:function (result) {
                         userHeadPic=result[3];
-                        if (result[0] == 1) {
+                        if (result[0] == 1 || result[0] == 0) {
                             tbody = "";
                             tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/"+result[3]+"\"\n" +
                                 "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
-                                "                <li><a href=\"#\">" + result[1] + "</a></li>"
+                                "                <li><a href=\"userspace.html\">" + result[1] + "</a></li>"
                                 + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
                             document.getElementById("usershow").innerHTML += tbody;
                         } else {
@@ -40,7 +40,6 @@
                 ifr.style.cssText = 'border: 0 none;width: 100%;height: 500px;';
             }
         );
-        $("div.navbar-fixed-top").autoHidingNavbar({});
     </script>
 </head>
 <body>
@@ -53,9 +52,14 @@
         </div>
         <div>
             <ul class="nav navbar-nav">
-                <li><a href="#">个人信息</a></li>
-                <li><a href="#">上传头像</a></li>
-                <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">上传视频</a></li>
+                <li><a href="usermodify.html" target="iframearea">个人信息</a></li>
+                <li><a href="userpic.html" target="iframearea">上传头像</a></li>
+                <li><a href="upload.html" target="iframearea">上传视频</a></li>
+                <li><a href="followers.html" target="iframearea">关注者</a></li>
+                <li><a href="userfollowed.html" target="iframearea">关注的人</a></li>
+                <li><a href="likevideos.html" target="iframearea">收藏的视频</a></li>
+                <li><a href="upload.html" target="iframearea">上传视频</a></li>
+                <li><a href="upload.html" target="iframearea">上传视频</a></li>
             </ul>
             <ul id="usershow" class="nav navbar-nav navbar-right">
                 <!--登录时-->
@@ -72,7 +76,7 @@
 <br><br><br><br>
 <div class="container">
     <div class="row">
-            <iframe id="myFrame" src="upload.html" style="width: 100%;height: 800px;">
+            <iframe name="iframearea" id="myFrame" src="upload.html" style="width: 100%;height: 100%;">
             </iframe>
     </div>
 </div>

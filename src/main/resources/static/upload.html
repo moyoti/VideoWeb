@@ -13,15 +13,12 @@
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style>
         #file{
-
         }
     </style>
     <script>
         $(function () {
             $("#btn").on('click', function () {
-
             });
-
             $("#file").change(function () {
                 $("#progress-bar").css("width", 0);
             });
@@ -43,12 +40,15 @@
                     return xhr;
                 }
             };
-
             var file = $("#file")[0].files[0];
             var videotitle=$("#videoname").val();
+            var picfile = $("#picfile")[0].files[0];
+            var videocontent=$("#videoContent").val();
             var form = new FormData();
             form.append('myfile', file);
             form.append('title',videotitle);
+            form.append('picfile',picfile);
+            form.append('content',videocontent);
             form.append("csrfmiddlewaretoken", '{{ csrf_token }}');
             $.ajax({
                 type: 'POST',
@@ -61,7 +61,6 @@
                     $("#progress-bar").css("width", (percent * 500));
                     document.getElementById("sr-only").innerText=parseInt((percent*100).toString())+"%";
                 }),
-
                 success: function (arg) {
                     console.log(arg);
                 }
@@ -74,12 +73,11 @@
     <div class="row">
         <div class="col-md-5 col-md-offset-2">
             <form action="/video/upload" enctype="multipart/form-data" method="POST">
-                <div id="uploadface">
-                    <!--<img src="QQ图片20181112000339.png" style="width: 80%;height: 80%;float: none;z-index: 2">-->
-                    <center style="float: left;z-index: 10;background: url('QQ图片20181112000339.png');width: 500px;height: 500px;"></center>
-                </div>
-                <input type="file" id="file" style="opacity: 0;position:absolute;width: 500px;height: 500px" onchange="UploadFile()"/>
-                <button id="btn">删除已上传视频并重新上传</button>
+                <input type="text" id="videoname">
+                <textarea id="videoContent" class="form-control" rows="4" placeholder=""
+                          style="resize: none;"></textarea>
+                <input type="file" id="picfile" style=""/>
+                <input type="file" id="file" style="" onchange="UploadFile()"/>
             </form>
             <div class="progress" style="width: 500px">
                 <div id="progress-bar" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"

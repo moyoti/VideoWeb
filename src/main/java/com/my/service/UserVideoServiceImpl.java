@@ -42,8 +42,10 @@ public class UserVideoServiceImpl implements UserVideoService {
         int uid;
         User user = null;
         try {
-            uid = userVideos.get(0).getUserid();
-            user = userMapper.selectByPrimaryKey(uid);
+            if(userVideos.size()!=0){
+                uid = userVideos.get(0).getUserid();
+                user = userMapper.selectByPrimaryKey(uid);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;

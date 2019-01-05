@@ -1,11 +1,9 @@
 package com.my.service;
 
+import com.my.dao.PicVideoMapper;
 import com.my.dao.VideoLikeMapper;
 import com.my.dao.VideoMapper;
-import com.my.pojo.Video;
-import com.my.pojo.VideoExample;
-import com.my.pojo.VideoLike;
-import com.my.pojo.VideoLikeExample;
+import com.my.pojo.*;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,15 +22,24 @@ public class VideoLikeServiceImpl implements VideoLikeService {
     private VideoLikeMapper videoLikeMapper;
     @Autowired
     private VideoMapper videoMapper;
+    @Autowired
+    private PicVideoMapper picVideoMapper;
     @Override
     public int insertLike(int uid, int vid) {
-        try{
-            VideoLike videoLike=new VideoLike();
-            videoLike.setUid(uid);
-            videoLike.setVid(vid);
-            return videoLikeMapper.insert(videoLike);
-        }catch (Exception e){
+        VideoLikeExample videoLikeExample=new VideoLikeExample();
+        videoLikeExample.or().andUidEqualTo(uid).andVidEqualTo(vid);
+        List<VideoLike> videoLikes=videoLikeMapper.selectByExample(videoLikeExample);
+        if(videoLikes.size()==1){
             return 0;
+        }else {
+            try{
+                VideoLike videoLike=new VideoLike();
+                videoLike.setUid(uid);
+                videoLike.setVid(vid);
+                return videoLikeMapper.insert(videoLike);
+            }catch (Exception e){
+                return 0;
+            }
         }
     }
 
@@ -48,18 +55,33 @@ public class VideoLikeServiceImpl implements VideoLikeService {
     }
 
     @Override
-    public List<Video> findVideoByUid(int uid) {
+    public List findVideoByUid(int uid) {
         VideoLikeExample videoLikeExample=new VideoLikeExample();
         videoLikeExample.or().andUidEqualTo(uid);
         List<VideoLike> lvs=videoLikeMapper.selectByExample(videoLikeExample);
         List<Integer> vids=new ArrayList<>();
+        if(lvs.isEmpty()){
+            return null;
+        }
         for(VideoLike item:lvs){
             vids.add(item.getVid());
         }
+        PicVideoExample picVideoExample=new PicVideoExample();
+        picVideoExample.or().andVideoidIn(vids);
+        List<PicVideo> picVideos=picVideoMapper.selectByExample(picVideoExample);
         VideoExample videoExample=new VideoExample();
         videoExample.or().andIdIn(vids);
         List<Video> videos=videoMapper.selectByExample(videoExample);
-        return videos;
+        List<SearchItem> searchItems=new ArrayList<>();
+        for(int i=0;i<picVideos.size();i++){
+            for(int n=0;n<videos.size();n++){
+                SearchItem searchItem=new SearchItem();
+                searchItem.setVideo(videos.get(n));
+                searchItem.setPicSrc(picVideos.get(i).getPicpath());
+                searchItems.add(searchItem);
+            }
+        }
+        return searchItems;
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @Author: dongqihang
@@ -40,6 +41,10 @@ public class VideoPicServiceImpl implements VideoPicService {
     public PicVideo getByVideoId(int id) {
         PicVideoExample picVideoExample=new PicVideoExample();
         picVideoExample.or().andVideoidEqualTo(id);
-        return picVideoMapper.selectByExample(picVideoExample).get(0);
+        List<PicVideo> re=picVideoMapper.selectByExample(picVideoExample);
+        if(re.isEmpty()){
+            return null;
+        }
+        return re.get(0);
     }
 }

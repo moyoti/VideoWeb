@@ -31,7 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/video")
 public class VideoController {
-    private static Logger logger= LoggerFactory.getLogger(VideoController.class);
+    private static Logger logger = LoggerFactory.getLogger(VideoController.class);
     @Autowired
     private VideoService videoService;
     @Autowired
@@ -46,13 +46,19 @@ public class VideoController {
     private UserBehaviorService userBehaviorService;
     @Autowired
     private BehaviorContextService behaviorContextService;
+    @Autowired
+    private VideoWatchService videoWatchService;
 
+    //    @RequestMapping(value = "/vcode",method = RequestMethod.GET)
+//    public Video addVideoBySrc(@RequestParam(value = "vcode")String vcode){
+//        return videoService.addVideoRecord(vcode);
+//    }
     @RequestMapping(value = "/{vid}", method = RequestMethod.GET)
     public Video showVideo(@PathVariable(value = "vid") int vid, HttpServletRequest request) {
-//        HttpSession session=request.getSession();
+        HttpSession session = request.getSession();
         Video video = videoService.getVideoById(vid);
         if (video == null) {
-            video=new Video();
+            video = new Video();
             video.setId(0);
             return video;
         }
@@ -63,21 +69,33 @@ public class VideoController {
 //            UserBehavior userBehavior=new UserBehavior();
 //            userBehavior.setBcontextid(behaviorContext.getId());
 //            userBehavior.setUid(Integer.parseInt(uid));
-//
 //        }
+
         return video;
     }
-    @RequestMapping(value = "/videouser",method = RequestMethod.POST)
-    public User videoUser(@PathVariable(value="vid") int vid,HttpServletRequest request){
-        User user=userVideoService.findUserByVid(vid);
-        if(user!=null){
+
+    @RequestMapping(value = "/getwatches", method = RequestMethod.POST)
+    public int getWatches(@Param(value = "vid") int vid) {
+        return videoWatchService.userWatch(vid);
+    }
+
+    @RequestMapping(value = "getvideoimg", method = RequestMethod.POST)
+    public PicVideo getVideoImg(@Param(value = "vid") int vid) {
+        return videoPicService.getByVideoId(vid);
+    }
+
+    @RequestMapping(value = "/videouser", method = RequestMethod.POST)
+    public User videoUser(@Param(value = "vid") int vid, HttpServletRequest request) {
+        User user = userVideoService.findUserByVid(vid);
+        if (user != null) {
             return user;
-        }else {
-            user=new User();
+        } else {
+            user = new User();
             user.setId(0);
             return user;
         }
     }
+
     //    @RequestMapping(value = "/upload", method = RequestMethod.POST)
 //    public int uploadVideo(HttpServletRequest request, MultipartFile file){
 //        String targetURL="D:\\Program Files\\qqp\\994308383\\FileRecv\\MobileFile\\VideoPart\\out\\artifacts\\VideoPart_war_exploded\\video";
@@ -88,11 +106,11 @@ public class VideoController {
 //        return videoService.addVideo(video,file, targetURL);
 //    }
     @RequestMapping(value = "/uploadPic", method = RequestMethod.POST)
-    public int PicUpload(@RequestParam(value = "myfile")MultipartFile file, @Param("vid") int vid) {
+    public int picUpload(@RequestParam(value = "myfile") MultipartFile file, @Param("vid") int vid) {
         String fileName = UUIDTool.getUUID() + file.getOriginalFilename();
-        List<String> fileTypes= Arrays.asList("jpg","png");
-        String fileType=fileName.split("\\.")[1];
-        if(!fileTypes.contains(fileType)){
+        List<String> fileTypes = Arrays.asList("jpg", "png");
+        String fileType = fileName.split("\\.")[1];
+        if (!fileTypes.contains(fileType)) {
             return 0;
         }
         String path = "D:\\upload\\pic";
@@ -109,20 +127,31 @@ public class VideoController {
 
     @RequestMapping(value = "/upload", method = {RequestMethod.POST})
     public @ResponseBody
-    int vUpload(@RequestParam(value = "myfile") MultipartFile file, HttpServletRequest request, @Param(value = "title") String title,@Param(value = "classify") int classify) {
+    int vUpload(@RequestParam(value = "myfile") MultipartFile file, HttpServletRequest request, @Param(value = "title") String title, @Param(value = "content") String content,
+//            ,@Param(value = "classify") int classify
+                @RequestParam(value = "picfile") MultipartFile picfile
+    ) {
         String path;
-        List<String> fileTypes= Arrays.asList("mp4");
+        List<String> fileTypes = Arrays.asList("mp4");
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
         path = "D:\\upload\\video";
         String fileName = UUIDTool.getUUID() + file.getOriginalFilename();
         String filetype = fileName.split("\\.")[1];
-        if(!fileTypes.contains(filetype)){
+        if (!fileTypes.contains(filetype)) {
             return 0;
         }
+        String picfileName = UUIDTool.getUUID() + picfile.getOriginalFilename();
+        List<String> picfileTypes = Arrays.asList("jpg", "png");
+        String picfileType = picfileName.split("\\.")[1];
+        if (!picfileTypes.contains(picfileType)) {
+            return 0;
+        }
+        String picpath = "D:\\upload\\pic";
         Video video = new Video();
         video.setVideoPath(fileName);
         video.setTitle(title);
+        video.setVideoContent(content);
         try {
             videoService.addVideo(video, file, path, fileName);
             User user = usersService.findByUsername(username);
@@ -130,13 +159,23 @@ public class VideoController {
             userVideo.setUserid(user.getId());
             userVideo.setVideoid(video.getId());
             userVideoService.addUserVideoService(userVideo);
-            VideoClassify videoClassify=new VideoClassify();
+            VideoClassify videoClassify = new VideoClassify();
             videoClassify.setVid(video.getId());
-            videoClassify.setCid(classify);
+            videoClassify.setCid(1);
             videoClassifyService.insert(videoClassify);
+
+            PicVideo picVideo = new PicVideo();
+            picVideo.setVideoid(video.getId());
+            picVideo.setPicpath(picfileName);
+            try {
+                videoPicService.addVideoPic(picVideo, picfile, picpath, picfileName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return 1;
     }
 }

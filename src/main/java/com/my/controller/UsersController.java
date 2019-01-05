@@ -1,7 +1,9 @@
 package com.my.controller;
 
 import com.my.dao.UserVideoMapper;
+import com.my.pojo.FollowUser;
 import com.my.pojo.User;
+import com.my.service.FollowUserService;
 import com.my.service.UserVideoService;
 import com.my.service.UsersService;
 import com.my.util.EncodeMD5;
@@ -35,19 +37,60 @@ public class UsersController {
     private UsersService usersService;
     @Autowired
     private UserVideoService userVideoService;
+    @Autowired
+    private FollowUserService followUserService;
 
+    @RequestMapping(value = "/follow",method = RequestMethod.POST)
+    public int followUser(HttpSession session, HttpServletRequest request){
+        Integer uid= (Integer) session.getAttribute("uid");
+        String fuid=request.getParameter("fuid");
+        if(uid==Integer.valueOf(fuid)){
+            return 0;
+        }
+        return followUserService.followUser(uid,Integer.valueOf(fuid));
+    }
+    @RequestMapping(value="/cancelFollow",method = RequestMethod.POST)
+    public int cancelFollow(HttpSession session, HttpServletRequest request){
+        Integer uid= (Integer) session.getAttribute("uid");
+        String fuid=request.getParameter("fuid");
+        return followUserService.cancelFollowUser(uid,Integer.valueOf(fuid));
+    }
+
+    /**
+     * 获得关注你的人
+     * @param session
+     * @return
+     */
+    @RequestMapping(value="/getFollowers",method = RequestMethod.POST)
+    public List getAllFollowers(HttpSession session){
+        Integer uid= (Integer) session.getAttribute("uid");
+        return followUserService.getFollowUser(uid);
+    }
+
+    /**
+     * 获得你关注的人
+     * @param session
+     * @return
+     */
+    @RequestMapping(value="/getFollowedUser",method = RequestMethod.POST)
+    public List getFollowedUsers(HttpSession session){
+        Integer uid= (Integer) session.getAttribute("uid");
+        return followUserService.getBeFollowedUser(uid);
+    }
     @RequestMapping(value = "/loginstats", method = RequestMethod.POST)
     public List userLoginCheck(HttpServletRequest request) {
         HttpSession session = request.getSession();
         List<Object> loginStat = new ArrayList<>();
         String stats = String.valueOf(session.getAttribute("loginstats"));
         String username = (String) session.getAttribute("username");
+        Integer uid=(Integer) session.getAttribute("uid");
         User user=usersService.findByUsername(username);
         if (stats.equals("1")||stats.equals("0")) {
             loginStat.add(stats);
             loginStat.add(username);
             loginStat.add(user.getNickname());
             loginStat.add(user.getUserPic());
+            loginStat.add(uid);
             return loginStat;
         } else {
             return loginStat;
@@ -56,7 +99,7 @@ public class UsersController {
     @RequestMapping(value = "/updateinfo",method = RequestMethod.POST)
     public int updateinfo(HttpServletRequest request,HttpSession session){
         String username=(String) session.getAttribute("username");
-        String newNickname=(String)request.getAttribute("nickname");
+        String newNickname=request.getParameter("nickname");
         try {
             User user=usersService.findByUsername(username);
             user.setNickname(newNickname);

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.js"></script>
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+    <script src="https://1277502619.github.io/product/js/mp.mansory.js"></script>
+    <style>
+        .thumbnail {
+            padding: 10px;
+            width: 250px;
+        }
+    </style>
+    <script>
+        function cancelLikeVideo(obj) {
+            var vid=obj.getAttribute("data-vid");
+            $.ajax({
+                type: "POST",
+                url: "/like/cancel",
+                data: {vid: vid},
+                success: function (re) {
+                    if (re == 1) {
+                        location.reload();
+                    }
+                    if (re == 0) {
+                        alert("删除失败");
+                    }
+                }
+            });
+        }
+        function openinnew(obj){
+            var id=obj.dataset.vid;
+            window.open("videopage.html?video="+id+"");
+        }
+
+        $(document).ready(function () {
+            var tbody;
+            $('#mainContainer').imagesLoaded(function () {
+                $("#mainContainer").masonry({
+                    itemSelector: '.thumbnail',
+                    isFitWidth: true,
+                    columnWidth: 250,
+                    isAnimated: true
+                });
+            });
+            $.ajax({
+                type: "POST",
+                url: "/like/likevideos",
+                data: {},
+                success:function (re) {
+                    var $container = $('#mainContainer');
+                    var $tbody;
+                    var sbody = '';
+                    for(var i=0;i<re.length;i++){
+                        sbody+=
+                            "            <div class=\"thumbnail\">\n" +
+                            "                <img src=\"http://localhost:8081/pic/"+re[i].picSrc+"\"\n" +
+                            "                     alt=\"加载失败\">\n" +
+                            "                <div class=\"caption\">\n" +
+                            "                    <h3><a onclick='openinnew(this)' data-vid=\""+re[i].video.id+"\">"+re[i].video.title+"</a></h3>\n" +
+                            "                    <p>"+re[i].video.videoContent+"</p>\n" +
+                            "                    <a data-vid='"+re[i].video.id+"' onclick='cancelLikeVideo(this)' class=\"btn btn-danger\" role=\"button\">\n" +
+                            "                        删除\n" +
+                            "                    </a>\n" +
+                            "                </div>\n" +
+                            "            </div>\n";
+                    }
+                    $tbody = $(sbody);
+                    $container.append($tbody);
+                    $container.masonry('appended', $tbody, true);
+
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="container-fluid" style="padding-top: 30px">
+        <center>
+            <div id="mainContainer">
+            </div>
+        </center>
+    </div>
+</div>
+</body>
+</html>

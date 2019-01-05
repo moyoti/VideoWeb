@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.js"></script>
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+    <script src="https://1277502619.github.io/product/js/mp.mansory.js"></script>
+    <style>
+        .thumbnail {
+            padding: 10px;
+            width: 250px;
+        }
+    </style>
+    <script>
+        var url;
+        var tmp1;
+        var param;
+        var tmp2;
+        var masonryNode;
+        url = location.href;
+        tmp1 = url.split("?")[1];
+        tmp2 = tmp1.split("&");
+        param = tmp2[0].split("=")[1];
+        param2 = tmp2[1].split("=")[1];
+        var page = 1;
+        document.onreadystatechange = function () {
+            console.log(document.readyState);
+            if (document.readyState == "complete") {
+                $(".loading").fadeOut();
+            }
+        };
+
+        function search() {
+            var keyword = $("#searchInput").val();
+            location.href = "searchout.html?keyword=" + keyword + "&page=1";
+        }
+
+        window.onscroll = function () {
+            var marginBot = 0;
+            if (document.documentElement.scrollTop) {
+                marginBot = document.documentElement.scrollHeight - (document.documentElement.scrollTop + document.body.scrollTop) - document.documentElement.clientHeight;
+            } else {
+                marginBot = document.body.scrollHeight - document.body.scrollTop - document.body.clientHeight;
+            }
+            if (marginBot <= 0) {
+                $.ajax({
+                    type: "GET",
+                    url: "/search/s",
+                    data: {keyword: param, page: page},
+                    success: function (re) {
+                        var $container = $('#mainContainer');
+                        var $tbody;
+                        var sbody = '';
+                        for (var i = 0; i < re.length; i++) {
+                            if (re[i].videoSrc == null || re[i].picSrc == null) {
+                                continue;
+                            }
+                            sbody += "            <div class=\"thumbnail\">\n" +
+                                "                <img src=\"" + formatString(re[i].picSrc) + "\"\n" +
+                                "                     alt=\"加载失败\">\n" +
+                                "                <div class=\"caption\">\n" +
+                                "                    <h5><a href=\"videopageout.html?video=" + re[i].videoSrc + "&picsrc=\"" + re[i].picSrc + ">观看视频</a></h5>\n" +
+                                "                    <p>" + re[i].content + "</p>\n" +
+                                "                </div>\n" +
+                                "            </div>\n";
+                        }
+                        $tbody = $(sbody);
+                        $container.append($tbody);
+                        $container.masonry('appended', $tbody, true);
+                    }
+                });
+                page++;
+            }
+        };
+        $(document).ready(function () {
+            var tbody;
+            $("#searchInput").attr("value", decodeURI(param));
+            $('#mainContainer').imagesLoaded(function () {
+                $("#mainContainer").masonry({
+                    itemSelector: '.thumbnail',
+                    isFitWidth: true,
+                    columnWidth: 250,
+                    isAnimated: true
+                });
+            });
+            $.ajax({
+                type: "GET",
+                url: "/search/s",
+                data: {keyword: param, page: param2},
+                success: function (re) {
+                    var $container = $('#mainContainer');
+                    var $tbody;
+                    var sbody = '';
+                    for (var i = 0; i < re.length; i++) {
+                        if (re[i].videoSrc == null || re[i].picSrc == null) {
+                            continue;
+                        }
+                        sbody += "            <div class=\"thumbnail\">\n" +
+                            "                <img src=\"" + formatString(re[i].picSrc) + "\"\n" +
+                            "                     alt=\"加载失败\">\n" +
+                            "                <div class=\"caption\">\n" +
+                            "                    <h5><a href=\"videopageout.html?video=" + re[i].videoSrc + "&picsrc=" + re[i].picSrc + "\">观看视频</a></h5>\n" +
+                            "                    <p>" + re[i].content + "</p>\n" +
+                            "                </div>\n" +
+                            "            </div>\n";
+                    }
+                    $tbody = $(sbody);
+                    $container.append($tbody);
+                    $container.masonry('appended', $tbody, true);
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "/users/loginstats",
+                data: {},
+                success: function (result) {
+                    userHeadPic = result[3];
+                    if (result[0] == 1 || result[0] == 0) {
+                        tbody = "";
+                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/" + result[3] + "\"\n" +
+                            "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
+                            "                <li><a href=\"#\">" + result[1] + "</a></li>"
+                            + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
+                        document.getElementById("usershow").innerHTML += tbody;
+                    } else {
+                        tbody = "<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
+                            "                <li><a href=\"login.html\"><span class=\"glyphicon glyphicon-log-in\"></span> 登录</a></li>";
+                        document.getElementById("usershow").innerHTML += tbody;
+                    }
+                }
+            });
+
+        });
+
+        function formatString(s) {
+            if (s == null) {
+                return null;
+            }
+            s = s.replace(/%2F/g, "/").replace(/%3F/g, "?").replace(/%3D/g, "=").replace(/%26/g, "&").replace(/%2C/g, ",").replace(/%3A/g, ":");
+            return s;
+        }
+    </script>
+</head>
+<body>
+<div class="navbar navbar-inverse visible-lg visible-md navbar-fixed-top navbar-hidden" role="navigation"
+     style="top: 0px;">
+    <div class="container">
+
+        <div class="navbar-header">
+            <a class="navbar-brand" href="homepage.html">首页</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+            </ul>
+            <ul id="usershow" class="nav navbar-nav navbar-right">
+
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container" style="padding-top: 60px">
+    <div class="row">
+        <div class="col-md-12">
+            <center>
+                <div class="input-group" style="width: 60%;">
+                    <input id="searchInput" type="text" class="form-control">
+                    <span class="input-group-btn">
+                    <button class="btn" onclick="search()">Search</button>
+                </span>
+                </div>
+            </center>
+        </div>
+    </div>
+</div>
+<div class="container-fluid" style="padding-top: 30px">
+    <center>
+        <div id="mainContainer">
+        </div>
+    </center>
+</div>
+</body>
+</html>

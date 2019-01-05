@@ -48,27 +48,6 @@
         }
 
         $(document).ready(function () {
-            var tbody;
-            $.ajax({
-                type: "POST",
-                url: "/users/loginstats",
-                data: {},
-                success: function (result) {
-                    userHeadPic = result[3];
-                    if (result[0] == 1||result[0] == 0) {
-                        tbody = "";
-                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/" + result[3] + "\"\n" +
-                            "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
-                            "                <li><a href=\"#\">" + result[1] + "</a></li>"
-                            + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
-                        document.getElementById("usershow").innerHTML += tbody;
-                    } else {
-                        tbody = "<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
-                            "                <li><a href=\"login.html\"><span class=\"glyphicon glyphicon-log-in\"></span> 登录</a></li>";
-                        document.getElementById("usershow").innerHTML += tbody;
-                    }
-                }
-            });
 
         });
 
@@ -185,50 +164,6 @@
             var vc = $("#vcode").val();
             var nickname = $("#u_nick").val();
             var nicknameRegex = /^[a-zA-Z\d]\w{2,10}[a-zA-Z\d]$/;
-            if (usernameRegex.test(username)) {
-                $("#usernameFlag")[0].innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
-                $("#usernameAlert").hide();
-            } else {
-                $("#usernameFlag")[0].innerHTML = "\n" +
-                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
-                $("#usernameAlert").show();
-                $("#usernameAlert")[0].innerHTML = "用户名格式有误";
-
-                return false;
-            }
-            if (passwordRegex.test(password)) {
-                $("#passwordFlag")[0].innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
-                $("#userPasswordAlert").hide();
-            } else {
-                $("#passwordFlag")[0].innerHTML = "\n" +
-                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
-                $("#userPasswordAlert").show();
-                $("#userPasswordAlert")[0].innerHTML = "密码格式有误";
-
-                return false;
-            }
-            if (emailRegex.test(email)) {
-                $("#emailFlag")[0].innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
-                $("#emailAlert").hide();
-            } else {
-                $("#emailFlag")[0].innerHTML = "\n" +
-                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
-                $("#emailAlert").show();
-                $("#emailAlert")[0].innerHTML = "邮箱格式有误";
-
-                return false;
-            }
-            if (phoneRegex.test(phone)) {
-                $("#phoneFlag")[0].innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
-                $("#phoneAlert").hide();
-            } else {
-                $("#phoneFlag")[0].innerHTML = "\n" +
-                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
-                $("#phoneAlert").show();
-                $("#phoneAlert")[0].innerHTML = "电话格式有误";
-
-                return false;
-            }
             if (nicknameRegex.test(nickname)) {
                 $("#nicknameFlag")[0].innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
                 $("#nickNameAlert").hide();
@@ -237,17 +172,6 @@
                     "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
                 $("#nickNameAlert").show();
                 $("#nickNameAlert")[0].innerHTML = "昵称格式有误";
-
-                return false;
-            }
-            if (passCheckRegex.test(passCheck) && passCheck == password) {
-                $("#recheckPassAlert").hide();
-                $("#passwordReFlag")[0].innerHTML = "<span class=\"glyphicon glyphicon-ok\" style=\"color: rgb(25, 214, 32); font-size: 13px;\"></span>";
-            } else {
-                $("#passwordReFlag")[0].innerHTML = "\n" +
-                    "<span class=\"glyphicon glyphicon-remove\" style=\"color: rgb(255, 50, 60);\"></span>";
-                $("#recheckPassAlert").show();
-                $("#recheckPassAlert")[0].innerHTML = "与密码不同";
 
                 return false;
             }
@@ -282,7 +206,7 @@
                 var nickname = $("#u_nick").val();
                 $.ajax({
                     type: "POST",
-                    url: "/users/signup",
+                    url: "/users/updateinfo",
                     data: {
                         nickname: nickname
                     },
@@ -310,15 +234,7 @@
             </div>
             <input id="u_nick" type="text" class="form-control" placeholder="昵称" maxlength="20" onblur="nicknameCK()">
 
-            <label>验证码：</label><span id="verifyFlag"></span>
-            <div id="vcAlert" style="display: none;float: right;" class="alert alert-warning info-alert">
-
-            </div>
-            <input id="vcode" type="text" class="form-control" placeholder="验证码">
-            <img id="verifycode" src="verify/getImage" alt="重新获取" onclick="getVerifyCode(this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
-                onclick="refreshCode()">看不清换一张</a><br/>
-
-            <button type="button" class="btn btn-primary" style="margin-top: 10px;width: 100%" onclick="updateInfo()">注册
+            <button type="button" class="btn btn-primary" style="margin-top: 10px;width: 100%" onclick="updateInfo()">提交
             </button>
         </div>
     </div>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.js"></script>
+    <script src="/js/bootstrap-autohidingnavbar.js"></script>
+    <style>
+        .dmmessage {
+            color: white;
+            font-size: x-large;
+            position: absolute;
+            font-weight: bolder;
+            user-select: none;
+            pointer-events: none;
+            display: inline-block;
+            white-space: pre;
+            will-change: transform;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: black;
+        }
+    </style>
+    <script>
+        var url;
+        var tmp1;
+        var param;
+        var param2;
+        function logout() {
+            $.ajax({
+                type: "POST",
+                url: "/users/logout",
+                data: {},
+                success: function (result) {
+                    if (result == 1) {
+                        location.href = "logout.html";
+                    }
+                }
+            });
+        }
+
+        function formatString(s) {
+            if(s==null){
+                return null;
+            }
+            s = s.replace(/%2F/g, "/").replace(/%3F/g, "?").replace(/%3D/g, "=").replace(/%26/g, "&").replace(/%2C/g, ",").replace(/%3A/g, ":");
+            return s;
+        }
+
+        $(document).ready(function () {
+            url = location.href;
+            tmp1 = url.split("?")[1];
+            tmp2=tmp1.split("&");
+//            var vcode=tmp1.split("=")[1];
+            param = tmp2[0].split("=")[1];
+            param2=tmp2[1].split("=")[1];
+            $("#mainVideo").attr("src", formatString(param));
+            $("#mainVideo").attr("poster", formatString(param2));
+            var tbody;
+            $.ajax({
+                type: "POST",
+                url: "/users/loginstats",
+                data: {},
+                success: function (result) {
+                    userHeadPic = result[3];
+                    if (result[0] == 1 || result[0] == 0) {
+                        tbody = "";
+                        tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/" + result[3] + "\"\n" +
+                            "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
+                            "                <li><a href=\"#\">" + result[1] + "</a></li>"
+                            + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
+                        document.getElementById("usershow").innerHTML += tbody;
+                    } else {
+                        tbody = "<li><a href=\"signup.html\"><span class=\"glyphicon glyphicon-user\"></span> 注册</a></li>\n" +
+                            "                <li><a href=\"login.html\"><span class=\"glyphicon glyphicon-log-in\"></span> 登录</a></li>";
+                        document.getElementById("usershow").innerHTML += tbody;
+                    }
+                }
+            });
+        });
+
+        $("div.navbar-fixed-top").autoHidingNavbar({});
+    </script>
+</head>
+<body>
+<div class="navbar navbar-inverse visible-lg visible-md navbar-fixed-top navbar-hidden" role="navigation"
+     style="top: 0px;">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="homepage.html">首页</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">链接1</a></li>
+                <li><a href="#">链接2</a></li>
+                <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">链接3</a></li>
+            </ul>
+            <ul id="usershow" class="nav navbar-nav navbar-right">
+                <!--登录时-->
+                <!--<li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"-->
+                <!--style="height: 38px;width:38px;margin-top: 6px"></li>-->
+                <!--<li><a href="#">username</a></li>-->
+                <!--未登录时-->
+                <!--<li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>-->
+                <!--<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>-->
+            </ul>
+        </div>
+    </div>
+</div>
+<br><br><br><br>
+<div class="container">
+    <!--<div class="row" style="padding: 20px">-->
+        <!--<div class="col-md-6">-->
+            <!--<div>-->
+                <!--<h2 id="videoTitle">-->
+                    <!--Title-->
+                <!--</h2>-->
+                <!--<div>-->
+                    <!--<span id="watches" class="glyphicon glyphicon-eye-open"-->
+                          <!--style="color: rgb(125, 125, 125);">Eye-open</span>-->
+                    <!--&nbsp;&nbsp;&nbsp;&nbsp;-->
+                    <!--<div style="display: inline" id="videoLike" onclick="likeLabelToggle()">-->
+                        <!--<span class="glyphicon glyphicon-star-empty" style="color: rgb(125, 125, 125);">收藏</span>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-md-6">-->
+            <!--<div class="container">-->
+                <!--<div class="row">-->
+                    <!--<div class="col-md-1">-->
+                        <!--<img id="authorImg" class="img-circle" src="" style="height: 80px;width: 80px">-->
+                    <!--</div>-->
+                    <!--<div class="col-md-9">-->
+                        <!--<div style="padding-left: 20px">-->
+                            <!--<div style="padding-bottom: 10px"><span id="authorUsername" style="font-size: x-large">username</span>-->
+                            <!--</div>-->
+                            <!--&lt;!&ndash;<div><span id="authorIntro" style="font-size: medium">introduce</span></div>&ndash;&gt;-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="row">
+        <div class="col-md-10" style="padding: 0px">
+            <center>
+                <!--<img style="width: 100%;height: 480px;z-index: 3;position: absolute" id="videoImg"-->
+                     <!--onclick="playVideo();" src="">-->
+                <!--</img>-->
+                <!--<div style="width: 100%;height: 480px;z-index: 2;position: absolute;pointer-events: none;overflow: hidden"-->
+                     <!--id="danmu">-->
+                <!--</div>-->
+                <video poster="" style="width: 100%;height: 480px;z-index: 1;object-fit: fill" id="mainVideo" src=""
+                       controls="controls" preload>
+                </video>
+            </center>
+        </div>
+    </div>
+    <!--<div class="row" id="dmInputArea">-->
+        <!--<div class="col-md-12">-->
+            <!--<div class="col-sm-10">-->
+                <!--<input disabled type="text" class="form-control" id="inputdanmu" autocomplete="off"-->
+                       <!--placeholder="登录后可发弹幕">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row">-->
+        <!--<h2>评论</h2>-->
+    <!--</div>-->
+    <!--<div id="commitLoginTip" class="row">-->
+        <!--<div class="col-md-12">-->
+            <!--<center style="color: #666666;">如要评论该视频，请先<span><a href="login.html">登录</a></span></center>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div id="pubComment" class="row">-->
+        <!--<div class="col-md-6">-->
+            <!--<div class="container" style="position:static;">-->
+                <!--<div class="row">-->
+                    <!--<div class="col-xs-2">-->
+                        <!--<img id="userCommentPic" class="img-circle" src=""-->
+                             <!--style="height: 90px;width:90px;margin-top: 20px;margin-left: 60px;position: static">-->
+                    <!--</div>-->
+                    <!--<br>-->
+                    <!--<div class="col-xs-7">-->
+                        <!--<textarea id="commentOfVideo" class="form-control" rows="4" placeholder="发表你的评论吧！"-->
+                                  <!--style="resize: none;"></textarea>-->
+                    <!--</div>-->
+                    <!--<div class="col-xs-1">-->
+                        <!--<button type="button" onclick="subCommentOfVideo()" class="btn btn-primary btn-lg"-->
+                                <!--style="height: 93px;width: 80px">发表-->
+                        <!--</button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<br><br>-->
+    <!--<div class="container" id="commentArea">-->
+        <!--<br>-->
+
+    <!--</div>-->
+    <!--<div class="container">-->
+        <!--<div class="row">-->
+            <!--<div class="col-md-12">-->
+                <!--<button id="moreCommentsBtn" style="width: 100%" type="button" class="btn btn-info"-->
+                        <!--onclick="showMoreComments(this)">查看更多评论-->
+                <!--</button>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<br>-->
+    <!--</div>-->
+<!--</div>-->
+<!--&lt;!&ndash;模态框&ndash;&gt;-->
+<!--<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+    <!--<div class="modal-dialog">-->
+        <!--<div class="modal-content">-->
+            <!--<div class="modal-header">-->
+                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                <!--<h4 class="modal-title" id="myModalLabel">发表评论</h4>-->
+            <!--</div>-->
+            <!--<div class="modal-body">-->
+                <!--<textarea id="subComment" class="form-control" rows="4" placeholder="发表你的评论吧！"-->
+                          <!--style="resize: none;"></textarea>-->
+            <!--</div>-->
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>-->
+                <!--<button id="subCommentCommit" type="button" class="btn btn-primary" onclick="subCommentCommit(this)">-->
+                    <!--提交-->
+                <!--</button>-->
+            <!--</div>-->
+        <!--</div>&lt;!&ndash; /.modal-content &ndash;&gt;-->
+    <!--</div>&lt;!&ndash; /.modal &ndash;&gt;-->
+</div>
+<!--<footer>-->
+    <!--<div style="width: 100%;height: 100px;background: black">-->
+
+    <!--</div>-->
+<!--</footer>-->
+</body>
+</html>

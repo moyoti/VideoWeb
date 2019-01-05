@@ -12,6 +12,9 @@
     <result column="video_path" property="videoPath" jdbcType="VARCHAR" />
     <result column="video_content" property="videoContent" jdbcType="VARCHAR" />
   </resultMap>
+  <select id="queryByPage" parameterType="map" resultMap="BaseResultMap">
+    SELECT * FROM comment_video WHERE video_id=#{vid} limit #{curIndex},#{pageSize}
+  </select>
   <sql id="Example_Where_Clause" >
     <!--
       WARNING - @mbggenerated

@@ -7,17 +7,103 @@
     <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.js"></script>
     <script src="/js/bootstrap-autohidingnavbar.js"></script>
+    <style>
+        .dmmessage {
+            color: white;
+            font-size: x-large;
+            position: absolute;
+            font-weight: bolder;
+            user-select: none;
+            pointer-events: none;
+            display: inline-block;
+            white-space: pre;
+            will-change: transform;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: black;
+        }
+    </style>
     <script>
         var url;
         var tmp1;
         var param;
         var commentpage = 1;
         var userHeadPic;
-        var likeLabelFlag=false;
+        var likeLabelFlag = false;
+        var dmbodyw;
+        var dmList;
+        var dmmove = setInterval(moveleft, 10);
+        var vuid;
+        var islogin = 0;
+
         function subCommentModalFrame(obj) {
             var cid = obj.dataset.cid;
             $("#myModal").modal("toggle");
             document.getElementById("subCommentCommit").dataset.cid = cid;
+        }
+
+        function moveleft() {
+            var arr = [];
+            var oSpan = document.getElementsByClassName("dmmessage");
+            for (var i = 0; i < oSpan.length; i++) {
+                arr.push(oSpan[i].offsetLeft);
+                arr[i] -= 2;
+                oSpan[i].style.left = arr[i] + 'px';
+                var offsets = -oSpan[i].offsetWidth;
+                if (arr[i] < offsets) {
+                    var dmDom = document.getElementById('danmu');
+                    dmDom.removeChild(oSpan[i]);
+                }
+            }
+        }
+
+        function initdm() {
+            $.ajax({
+                type: "POST",
+                url: "/dm/getbyvid",
+                data: {vid: param},
+                success: function (re) {
+                    for (var i = 0; i < re.length; i++) {
+                        var curpos = parseInt(re[i].vduration);
+                        dmList[curpos] = new Array();
+                    }
+                    for (var i = 0; i < re.length; i++) {
+                        var curpos = parseInt(re[i].vduration);
+                        dmList[curpos].push(re[i]);
+                    }
+                }
+            })
+        }
+
+        function dmShow() {
+            var curTime = parseInt($('#mainVideo')[0].currentTime);
+            var dmInSecond = dmList[curTime];
+            for (var i = 0; i < dmInSecond.length; i++) {
+                var pos = [];
+                pos[0] = dmbodyw;
+                pos[1] = Math.random() * 400;
+                var dmDom = document.getElementById('danmu');
+                dmDom.innerHTML += "<span class=\"dmmessage\" style=\'top: " + pos[1] + "px;left:" + pos[0] + "px\' >" + dmInSecond[i].content + "</span>"
+            }
+        }
+
+        function dmSend() {
+            var message = $("#inputdanmu").val();
+            var curTime = $('#mainVideo')[0].currentTime;
+            var pos = [];
+            pos[0] = dmbodyw;
+            pos[1] = Math.random() * 400;
+            var dmDom = document.getElementById('danmu');
+            dmDom.innerHTML += "<span class=\"dmmessage\" style=\'top: " + pos[1] + "px;left:" + pos[0] + "px\' >" + message + "</span>"
+            $.ajax({
+                type: "POST",
+                url: "/dm/send",
+                data: {content: message, vid: param, curTime: curTime},
+                success: function (re) {
+                    if (re == 1) {
+
+                    }
+                }
+            });
         }
 
         function subCommentCommit(obj) {
@@ -231,11 +317,46 @@
             });
         }
 
+        function playVideo() {
+            $("#videoImg")[0].style.display = "none";
+            $("#mainVideo")[0].play();
+            setInterval(dmShow, 1000);
+        }
+
+        function formatString(s) {
+            s = s.replace(/%2F/g, "/").replace(/%3F/g, "?").replace(/%3D/g, "=").replace(/%26/g, "&").replace(/%2C/g, ",").replace(/%3A/g, ":");
+            return s;
+        }
+
         $(document).ready(function () {
+            dmbodyw = $("#danmu")[0].offsetWidth;
             url = location.href;
             tmp1 = url.split("?")[1];
+//            var vcode=tmp1.split("=")[1];
             param = tmp1.split("=")[1];
-
+            dmList = new Array(new Array(), new Array());
+            initdm();
+            $.ajax({
+                type: "POST",
+                url: "/video/getvideoimg",
+                data: {vid: param},
+                success: function (re) {
+                    $("#videoImg").attr("src", "http://localhost:8081/pic/" + re.picpath);
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/video/" + param,
+                data: {},
+                success: function (result) {
+                    if (result.id == 0) {
+                        location.href = "error/404.html"
+                    }
+//                    param=result.id;
+                    $("#mainVideo").attr("src", "http://localhost:8081/video/" + result.videoPath);
+                    document.getElementById("videoTitle").innerText = result.title;
+                }
+            });
             var tbody;
             $.ajax({
                 type: "POST",
@@ -244,15 +365,24 @@
                 success: function (result) {
                     userHeadPic = result[3];
                     if (result[0] == 1 || result[0] == 0) {
+                        islogin = 1;
 //                        document.getElementById("pubComment").style.visibility="visible";
                         document.getElementById("commitLoginTip").style.display = "none";
                         $("#userCommentPic").attr("src", "http://localhost:8081/pic/" + result[3]);
                         tbody = "";
                         tbody = "<li><img class=\"img-circle\" src=\"http://localhost:8081/pic/" + result[3] + "\"\n" +
                             "                         style=\"height: 38px;width:38px;margin-top: 6px\"></li>\n" +
-                            "                <li><a href=\"#\">" + result[1] + "</a></li>"
+                            "                <li><a href=\"userspace.html\">" + result[1] + "</a></li>"
                             + "<li><a onclick='logout()'><span class=\"glyphicon glyphicon-log-out\"></span>注销</a></li>";
                         document.getElementById("usershow").innerHTML += tbody;
+                        tbody = "";
+                        tbody = "<div class=\"col-md-12\">\n" +
+                            "            <div class=\"col-sm-8\">\n" +
+                            "                <input type=\"text\" class=\"form-control\" id=\"inputdanmu\" autocomplete=\"off\" placeholder=\"输入弹幕\">\n" +
+                            "            </div>\n" +
+                            "            <button type=\"submit\" class=\" btn btn-primary\" onclick=\"dmSend()\">提交</button>\n" +
+                            "        </div>"
+                        document.getElementById('dmInputArea').innerHTML = tbody;
                     } else {
 //                        document.getElementById("commitLoginTip").style.visibility="visible";
                         document.getElementById("pubComment").style.display = "none";
@@ -269,62 +399,108 @@
                 success: function (re) {
                     $("#authorImg")[0].src = "http://localhost:8081/pic/" + re.userPic;
                     $("#authorUsername")[0].innerHTML = re.nickname;
+                    vuid = re.id;
                 }
             });
-
             $.ajax({
-                type: "GET",
-                url: "/video/" + param,
-                data: {},
-                success: function (result) {
-                    if (result.id == 0) {
-                        location.href = "error/404.html"
-                    }
-                    $("#mainVideo").attr("src", "http://localhost:8081/video/" + result.videoPath);
-                    document.getElementById("videoTitle").innerText = result.title;
+                type: "POST",
+                url: "/video/getwatches",
+                data: {vid: param},
+                success: function (re) {
+                    $("#watches")[0].innerHTML = "&nbsp;" + re;
                 }
             });
             loadComments();
             $.ajax({
                 type: "POST",
-                url: "/like/likevideos",
-                data: {vid:param},
+                url: "/like/likestat",
+                data: {vid: param},
                 success: function (result) {
-                    if(result==1){
+                    if (result == 1) {
                         $("#videoLike")[0].innerHTML = "<span class=\"glyphicon glyphicon-star\" style=\"color: rgb(255, 91, 0);\"> 已收藏</span>"
+                        likeLabelFlag = true;
                     }
                 }
             });
         });
 
         function likeLabelToggle() {
-            if(likeLabelFlag){
+            if (likeLabelFlag) {
                 cancelLikeVideo();
             }
-            if(!likeLabelFlag){
+            if (!likeLabelFlag) {
                 likeVideo();
             }
         }
+
         function likeVideo() {
             $.ajax({
-                type:"POST",
-                url:"/like/add",
-                data:{vid:param},
-                success:function (re) {
-                    if(re==1){
+                type: "POST",
+                url: "/like/add",
+                data: {vid: param},
+                success: function (re) {
+                    if (re == 1) {
                         $("#videoLike")[0].innerHTML = "<span class=\"glyphicon glyphicon-star\" style=\"color: rgb(255, 91, 0);\"> 已收藏</span>"
+                        likeLabelFlag = true;
+                    }
+
+                }
+            });
+        }
+
+        function cancelLikeVideo() {
+            $.ajax({
+                type: "POST",
+                url: "/like/cancel",
+                data: {vid: param},
+                success: function (re) {
+                    if (re == 1) {
+                        $("#videoLike")[0].innerHTML = "<span class=\"glyphicon glyphicon-star-empty\" style=\"color: rgb(125, 125, 125);\"> 收藏</span>"
+                        likeLabelFlag = false;
+                    }
+                    if (re == 0) {
+                        alert("收藏失败");
                     }
                 }
             });
         }
-        function cancelLikeVideo() {
+
+        var followFlag = false;
+
+        function followUser() {
+            if (islogin == 1) {
+                $.ajax({
+                    type: "POST",
+                    url: "/users/follow",
+                    data: {fuid: vuid},
+                    success: function (re) {
+                        if (re == 1) {
+                            $("#followbtn")[0].innerHTML = "<button class=\"btn btn-primary\" onclick=\"cancelFollow()\">已关注</button>"
+                            followFlag = true;
+                        }
+                        if (re == 0) {
+                            alert("关注失败");
+                        }
+                    }
+                });
+            } else {
+                $("#followModel").modal("toggle");
+            }
+
+        }
+
+        function cancelFollow() {
             $.ajax({
-                type:"POST",
-                url:"/like/add",
-                data:{vid:param},
-                success:function (re) {
-                    if(re==1){
-                        $("#videoLike")[0].innerHTML = "<span class=\"glyphicon glyphicon-star-empty\" style=\"color: rgb(125, 125, 125);\"> 收藏</span>"
+                type: "POST",
+                url: "/users/cancelFollow",
+                data: {fuid: vuid},
+                success: function (re) {
+                    if (re == 1) {
+                        $("#followbtn")[0].innerHTML = "<button class=\"btn btn-primary\" onclick=\"followUser()\">关注</button>";
+                        followFlag = false;
+                    }
+                    if (re == 0) {
+                        alert("取关失败");
                     }
                 }
             });
@@ -337,16 +513,10 @@
 <div class="navbar navbar-inverse visible-lg visible-md navbar-fixed-top navbar-hidden" role="navigation"
      style="top: 0px;">
     <div class="container">
-
         <div class="navbar-header">
             <a class="navbar-brand" href="homepage.html">首页</a>
         </div>
         <div>
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">链接1</a></li>
-                <li><a href="#">链接2</a></li>
-                <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">链接3</a></li>
-            </ul>
             <ul id="usershow" class="nav navbar-nav navbar-right">
                 <!--登录时-->
                 <!--<li><img class="img-circle" src="http://localhost:8081/pic/20151101201716.jpg"-->
@@ -368,7 +538,8 @@
                     Title
                 </h2>
                 <div>
-                    <span class="glyphicon glyphicon-eye-open" style="color: rgb(125, 125, 125);"> Eye-open</span>
+                    <span id="watches" class="glyphicon glyphicon-eye-open"
+                          style="color: rgb(125, 125, 125);">Eye-open</span>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <div style="display: inline" id="videoLike" onclick="likeLabelToggle()">
                         <span class="glyphicon glyphicon-star-empty" style="color: rgb(125, 125, 125);">收藏</span>
@@ -386,6 +557,9 @@
                         <div style="padding-left: 20px">
                             <div style="padding-bottom: 10px"><span id="authorUsername" style="font-size: x-large">username</span>
                             </div>
+                            <div>
+                                <span id="followbtn"><button class="btn btn-primary" onclick="followUser()">关注</button></span>
+                            </div>
                             <!--<div><span id="authorIntro" style="font-size: medium">introduce</span></div>-->
                         </div>
                     </div>
@@ -394,12 +568,26 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-10" style="padding: 0px">
             <center>
-                <video style="width: 100%;height: 480px;" id="mainVideo" src=""
+                <!--<img style="width: 100%;height: 480px;z-index: 3;position: absolute" id="videoImg"-->
+                <!--onclick="playVideo();" src="">-->
+                <!--</img>-->
+                <div style="width: 100%;height: 480px;z-index: 2;position: absolute;pointer-events: none;overflow: hidden"
+                     id="danmu">
+                </div>
+                <video poster="" style="width: 100%;height: 480px;z-index: 1;object-fit: fill" id="mainVideo" src=""
                        controls="controls" preload>
                 </video>
             </center>
+        </div>
+    </div>
+    <div class="row" id="dmInputArea">
+        <div class="col-md-12">
+            <div class="col-sm-10">
+                <input disabled type="text" class="form-control" id="inputdanmu" autocomplete="off"
+                       placeholder="登录后可发弹幕">
+            </div>
         </div>
     </div>
     <div class="row">
@@ -435,7 +623,6 @@
     <br><br>
     <div class="container" id="commentArea">
         <br>
-
     </div>
     <div class="container">
         <div class="row">
@@ -465,6 +652,15 @@
                 <button id="subCommentCommit" type="button" class="btn btn-primary" onclick="subCommentCommit(this)">
                     提交
                 </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="modal fade" id="followModel" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <center><p>关注前请先<a href="login.html">登录</a></p></center>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->

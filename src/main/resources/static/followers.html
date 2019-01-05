@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.js"></script>
+    <script>
+        var tbody;
+        var page;
+        var currentPage=1;
+        var allEle;
+        $(document).ready(function () {
+            $.ajax({
+                type: "POST",
+                url: "/users/getFollowers",
+                data: {},
+                success: function (re) {
+                    allEle=re;
+                    page = Math.ceil(re.length / 24);
+                    $('#curpage')[0].setAttribute('max',page);
+                    if (page==1){
+//                        $("#pre").hide();
+//                        $("#nxt").hide();
+                        document.getElementById("nxt").className='next disabled';
+                        document.getElementById("pre").className='previous disabled';
+                    }else{
+//                        $("#pre").hide();
+//                        $("#nxt").show();
+                        document.getElementById("pre").className='previous disabled';
+                        document.getElementById("nxt").className='next';
+                    }
+                    for (var i = 0; i < 24; i++) {
+                        loadFollowed(allEle[i]);
+                    }
+                }
+            });
+        });
+        function loadNextPage() {
+            currentPage++;
+            if(currentPage>=page){
+                document.getElementById("nxt").className='next disabled';
+                document.getElementById("pre").className='previous';
+            }
+            var maincontainer = $("#mainContainer")[0];
+            maincontainer.innerHTML = '';
+            for(var i=(24*(currentPage-1));24*(currentPage-1)<=i&&i<(24*currentPage);i++){
+                loadFollowed(allEle[i]);
+            }
+        }
+        function loadLastPage() {
+            currentPage--;
+            if(page<0){
+                document.getElementById("pre").className='previous disabled';
+                document.getElementById("nxt").className='next';
+            }
+            var maincontainer = $("#mainContainer")[0];
+            maincontainer.innerHTML = '';
+            for(var i=(24*(currentPage-1));24*(currentPage-1)<=i&&i<(24*currentPage);i++){
+                loadFollowed(allEle[i]);
+            }
+        }
+        function gotoCurrentPage() {
+            currentPage--;
+            var curpage=$('#curpage').val();
+            if (curpage>page||curpage<=0){
+                return;
+            }
+            currentPage=curpage;
+            if(page<0){
+                document.getElementById("pre").className='previous disabled';
+                document.getElementById("nxt").className='next';
+            }
+            var maincontainer = $("#mainContainer")[0];
+            maincontainer.innerHTML = '';
+            for(var i=(24*(currentPage-1));24*(currentPage-1)<=i&&i<(24*currentPage);i++){
+                loadFollowed(allEle[i]);
+            }
+        }
+        function loadFollowed(re) {
+            var maincontainer = $("#mainContainer")[0];
+            try{
+                tbody = "<div class=\"col-sm-2\">\n" +
+                    "        <div class=\"media\">\n" +
+                    "            <div class=\"media-left\">\n" +
+                    "                <img class=\"img-circle\" src=\"http://localhost:8081/pic/" + re.userPic + "\" style=\"height: 38px;width: 38px;margin-top: 6px\">\n" +
+                    "            </div>\n" +
+                    "            <div class=\"media-body\">\n" +
+                    "                <h4 class=\"media-heading\">" + re.nickname + "</h4>\n" +
+                    "                <div>\n" +
+                    "                    <button class=\"btn btn-danger\" data-uid='" + re.id + "' onclick=\"cancelFollow(this)\">取消关注</button>\n" +
+                    "                </div>\n" +
+                    "            </div>\n" +
+                    "        </div>\n" +
+                    "    </div>";
+                maincontainer.innerHTML += tbody;
+            }catch (e){
+
+            }
+
+        }
+
+        function cancelFollow(obj) {
+            var vuid = obj.dataset.uid;
+            $.ajax({
+                type: "POST",
+                url: "/users/cancelFollow",
+                data: {fuid: vuid},
+                success: function (re) {
+                    if (re == 1) {
+                        alert("已取消关注");
+                        location.reload();
+                    }
+                    if (re == 0) {
+                        alert("取关失败");
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="container" id="mainContainer">
+    <!--<div class="col-sm-3">-->
+    <!--<div class="media">-->
+    <!--<div class="media-left">-->
+    <!--<img class="img-circle" src="" style="height: 38px;width: 38px;margin-top: 6px">-->
+    <!--</div>-->
+    <!--<div class="media-body">-->
+    <!--<h4 class="media-heading">username</h4>-->
+    <!--<div>-->
+    <!--<button class="btn btn-danger" onclick="cancelFollow()">取消关注</button>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+</div>
+<center>
+    <ul class="pager">
+        <li id="pre" class="previous"><a onclick="loadLastPage()">&larr; 上一页</a></li>
+        <span>
+            <label>第</label>
+        <input id="curpage" type="number" max="" style="width: 80px" onchange="gotoCurrentPage()">
+            <label>页</label>
+            </span>
+        <li id="nxt" class="next"><a onclick="loadNextPage()">下一页 &rarr;</a></li>
+    </ul>
+</center>
+</body>
+</html>

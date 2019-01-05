@@ -64,7 +64,13 @@
         <!--</table>-->
         <!--<table schema="videoweb" tableName="behavior_content">-->
         <!--</table>-->
-        <table schema="videoweb" tableName="behavior_context">
+        <!--<table schema="videoweb" tableName="behavior_context">-->
+        <!--</table>-->
+        <!--<table schema="videoweb" tableName="video_watch">-->
+        <!--</table>-->
+        <!--<table schema="videoweb" tableName="dm_content">-->
+        <!--</table>-->
+        <table schema="videoweb" tableName="follow_user">
         </table>
         <!--<table schema="videoweb" tableName="behavior_type">-->
         <!--</table>-->

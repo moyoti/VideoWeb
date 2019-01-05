@@ -12,7 +12,7 @@
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
-        function UploadFile() {
+        function UploadPicFile() {
             var xhrOnProgress = function (fun) {
                 xhrOnProgress.onprogress = fun; //绑定监听
                 //使用闭包实现监听绑
@@ -30,7 +30,7 @@
                 }
             };
 
-            var file = $("#file")[0].files[0];
+            var file = $("#picfile")[0].files[0];
             var form = new FormData();
             form.append('myfile', file);
             form.append("csrfmiddlewaretoken", '{{ csrf_token }}');
@@ -56,10 +56,11 @@
 </head>
 <body>
 <form action="/video/uploadPic" enctype="multipart/form-data" method="POST">
-    <div id="uploadface">
+    <div id="uploadface1">
         <center style="float: left;z-index: 10;background: url('QQ图片20181112000339.png');width: 500px;height: 500px;"></center>
     </div>
-    <input type="file" id="file" style="opacity: 0;position:absolute;width: 500px;height: 500px" onchange="UploadFile()"/>
+    <input type="file" id="picfile" style=""/>
+    <button id="picbtn" onclick="UploadPicFile">上传封面</button>
     <label onclick="$('#file')[0].disabled='false'">删除已上传并重新上传</label>
 </form>
 </body>

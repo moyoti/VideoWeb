@@ -2,6 +2,7 @@ package com.my.service;
 
 import com.my.dao.VideoMapper;
 import com.my.pojo.Video;
+import com.my.pojo.VideoExample;
 import com.my.util.FileTransferClient;
 import com.my.util.UUIDTool;
 import org.apache.commons.io.FileUtils;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @Author: dongqihang
@@ -57,5 +59,22 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public Video getVideoById(int id) {
         return videoMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public Video addVideoRecord(String srcURL) {
+        VideoExample videoExample=new VideoExample();
+        videoExample.or().andVideoPathEqualTo(srcURL);
+        List<Video> re=videoMapper.selectByExample(videoExample);
+        if(re.isEmpty()){
+            Video video=new Video();
+            video.setVideoPath(srcURL);
+            video.setTitle("");
+            videoMapper.insert(video);
+            return video;
+        }else {
+            return re.get(0);
+        }
+
     }
 }
