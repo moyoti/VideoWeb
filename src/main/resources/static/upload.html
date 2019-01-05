@@ -73,10 +73,14 @@
     <div class="row">
         <div class="col-md-5 col-md-offset-2">
             <form action="/video/upload" enctype="multipart/form-data" method="POST">
+                <label>视频标题：</label>
                 <input type="text" id="videoname">
+                <label>视频简介：</label>
                 <textarea id="videoContent" class="form-control" rows="4" placeholder=""
                           style="resize: none;"></textarea>
+                <label>视频缩略图：</label>
                 <input type="file" id="picfile" style=""/>
+                <label>上传视频：</label>
                 <input type="file" id="file" style="" onchange="UploadFile()"/>
             </form>
             <div class="progress" style="width: 500px">

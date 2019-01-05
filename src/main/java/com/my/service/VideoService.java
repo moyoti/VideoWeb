@@ -3,6 +3,8 @@ package com.my.service;
 import com.my.pojo.Video;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /**
  * @Author: dongqihang
  * @Date: Created in 11:13 2018/10/9

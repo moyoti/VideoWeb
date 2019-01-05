@@ -27,7 +27,7 @@ public class VideoLikeController {
     private VideoLikeService videoLikeService;
     @RequestMapping(value="/add",method = RequestMethod.POST)
     public int addLike(HttpSession session,@Param(value = "vid") int vid){
-        Integer uid= (Integer) session.getAttribute("uid");
+        Integer uid=(Integer) session.getAttribute("uid");
         if (uid==null){
             return 0;
         }else {

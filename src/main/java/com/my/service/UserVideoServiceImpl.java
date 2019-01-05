@@ -55,4 +55,12 @@ public class UserVideoServiceImpl implements UserVideoService {
         }
         return null;
     }
+
+    @Override
+    public List<UserVideo> findVideosByUid(List<Integer> uid) {
+        UserVideoExample userVideoExample=new UserVideoExample();
+        userVideoExample.setOrderByClause("id desc");
+        userVideoExample.or().andUseridIn(uid);
+        return userVideoMapper.selectByExample(userVideoExample);
+    }
 }

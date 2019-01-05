@@ -48,6 +48,8 @@ public class VideoController {
     private BehaviorContextService behaviorContextService;
     @Autowired
     private VideoWatchService videoWatchService;
+    @Autowired
+    private FollowUserService followUserService;
 
     //    @RequestMapping(value = "/vcode",method = RequestMethod.GET)
 //    public Video addVideoBySrc(@RequestParam(value = "vcode")String vcode){
@@ -177,5 +179,26 @@ public class VideoController {
         }
 
         return 1;
+    }
+    @RequestMapping(value = "/getUserVideo",method = RequestMethod.POST)
+    public List getFollowUserVideo(HttpSession session){
+        Integer uid= (Integer) session.getAttribute("uid");
+        if(uid==null){
+            return null;
+        }
+        List<User> follows=followUserService.getBeFollowedUser(uid);
+        List<Integer> uids=new ArrayList<>();
+        for(User i:follows){
+            uids.add(i.getId());
+        }
+        List<UserVideo> videoids=userVideoService.findVideosByUid(uids);
+        List re=new ArrayList();
+        for (UserVideo i:videoids){
+            SearchItem searchItem=new SearchItem();
+            searchItem.setVideo(videoService.getVideoById(i.getVideoid()));
+            searchItem.setPicSrc(videoPicService.getByVideoId(i.getVideoid()).getPicpath());
+            re.add(searchItem);
+        }
+        return re;
     }
 }

@@ -143,9 +143,6 @@ public class UsersController {
         if(!VerifyInfo.verifyUNOrPassForamt(username)){
             return 0;
         }
-        if(!VerifyInfo.verifyUNOrPassForamt(password)){
-            return 0;
-        }
         if(!VerifyInfo.verifyEmailFormat(email)){
             return 0;
         }

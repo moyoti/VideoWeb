@@ -3,10 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>HomePage</title>
-    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
     <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
     <script src="https://1277502619.github.io/product/js/mp.mansory.js"></script>
+
+    <style>
+        .thumbnail {
+            padding: 10px;
+            width: 250px;
+        }
+    </style>
     <style>
 
         ul.nav-tabs {
@@ -50,10 +63,6 @@
             top: 30px; /* Set the top position of pinned element */
         }
     </style>
-    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
-    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.js"></script>
-    <script src="/js/bootstrap-autohidingnavbar.js"></script>
-    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
     <script>
         function search() {
             var keyword=$("#searchInput").val();
@@ -61,6 +70,10 @@
         }
         var userHeadPic;
 
+        function openinnew(obj){
+            var id=obj.dataset.vid;
+            window.open("videopage.html?video="+id);
+        }
         function logout() {
             $.ajax({
                 type: "POST",
@@ -76,6 +89,38 @@
 
         $(document).ready(function () {
             var tbody;
+            $('#mainContainer').imagesLoaded(function () {
+                $("#mainContainer").masonry({
+                    itemSelector: '.thumbnail',
+                    isFitWidth: true,
+                    columnWidth: 250,
+                    isAnimated: true
+                });
+            });
+            $.ajax({
+                type: "POST",
+                url: "/video/getUserVideo",
+                data: {},
+                success: function (re) {
+                    var $container = $('#mainContainer');
+                    var $tbody;
+                    var sbody = '';
+                    for(var i=0;i<re.length;i++){
+                        sbody+=
+                            "            <div class=\"thumbnail\">\n" +
+                            "                <img src=\"http://localhost:8081/pic/"+re[i].picSrc+"\"\n" +
+                            "                     alt=\"加载失败\">\n" +
+                            "                <div class=\"caption\">\n" +
+                            "                    <h3><a onclick='openinnew(this)' data-vid=\""+re[i].video.id+"\">"+re[i].video.title+"</a></h3>\n" +
+                            "                    <p>"+re[i].video.videoContent+"</p>\n" +
+                            "                </div>\n" +
+                            "            </div>\n";
+                    }
+                    $tbody = $(sbody);
+                    $container.append($tbody);
+                    $container.masonry('appended', $tbody, true);
+                }
+            });
             $.ajax({
                 type: "POST",
                 url: "/users/loginstats",
